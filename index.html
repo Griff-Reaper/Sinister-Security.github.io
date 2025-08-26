@@ -5,42 +5,66 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0>
     <title>Griff's Sinister Cyber Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
+    <!------Matrix Background-->
+    <canvas class="matrix-bg" id="matrix"></canvas>
+
     <!-- header site -->
     <header>
-        <div class="logo"><span>J</span>ace.</div>
-        <ul class="navlist">
-            <li><a herf="#home">Home</a></li>
-            <li><a herf="#about">About</a></li>
-            <li><a herf="#skills">Skills</a></li>
-            <li><a herf="#portfolio">Portfolio</a></li>
-            <li><a herf="#contact">Contact</a></li>
-        </ul>
-        <div id="menu-icon" class='bx  bx-menu'  ></i> "
+        <nav>
+            <div class="logo">CYBER_REAPER</div>
+            <ul class="nav-links" id="navlinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Me</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#certifications">Certs</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </nav>
     </header>
 
-
-    <!-- home section ----------------------------------------------------------------------------------->
-     <section id="home" class="home">
-        <div class="home-content">
-            <h1> Hi! I'm Jace Griffith</h1>
-            <div class="change-text">
-                <h3> And I'm</h3>
-                <h3>
-                    <span class="word">Cybersecurity Specialist</span>
-                    <span class="word">Systems Administrator</span>
-                    <span class="word">Ethical Hacker</span>
-                    <span class="word">Navy Veteran</span>
-                    <span class="word">Sports Enthuisiast</span>
-                    <span class="word">Information Technology SPeacialist</span>
-                </span>
-                </h3>
+    <!---Hero Section-->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>CYBER REAPER</h1>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <div class="btn-circle"></div>
+                        <div class="btn-circle"></div>
+                        <div class="btn-circle"></div>
+                    </div>
+                    <span style="margin-left: 1rem; color: var(--text-secondary);">reaper@cyber:~$</span>
+                </div>
+                <div class="typing-text" id="typingText"></div>
             </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Vulnerabilities Found</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">99.8%</span>
+                    <span class="stat-label">Threat Detection</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Systems Secured</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Network Monitoring</span>
+                </div>
         </div>
-     </section>
-    <script src=""script.js"></script>
+    </section>
 </body>
 </html>
