@@ -28,8 +28,8 @@ class CyberPortfolio {
 
     setupEventListeners() {
         // Mobile menu toggle
-        const menuToggle = document.getElementById('menu-toggle');
-        const navLinks = document.getElementById('nav-links');
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navlinks');
 
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('active');

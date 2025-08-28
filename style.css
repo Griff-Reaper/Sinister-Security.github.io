@@ -621,7 +621,7 @@ footer {
 		border-top: var(--border-neon);
 	}
 
-	.nav-links .active {
+	.nav-links.active {
 		display: flex;
 	}
 
