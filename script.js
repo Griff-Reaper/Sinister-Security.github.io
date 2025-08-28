@@ -1,3 +1,7 @@
+// Check if Chart.js loaded
+if (typeof Chart === 'undefined') {
+    console.error('Chart.js not loaded!');
+}
 class CyberPortfolio {
     constructor() {
         this.init();
