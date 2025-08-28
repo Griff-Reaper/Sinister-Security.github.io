@@ -239,10 +239,4 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 // Console message for curious developers
-console.log('
-╔═══════════════════════════════════════╗
-║          CYBER REAPER ONLINE          ║
-║    Unauthorized access detected...    ║
-║      Initiating countermeasures       ║
-╚═══════════════════════════════════════╝
-');
+console.log('CYBER REAPER ONLINE - All systems operational.');
