@@ -37,7 +37,7 @@ class CyberPortfolio {
                 e.preventDefault();
                 const target = document.querySelector(anchor.getAttribute('href'));
                 if (target) {
-                    targetscrollIntoView({
+                    target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
@@ -95,7 +95,7 @@ class CyberPortfolio {
     }
 
     startTypewriter() {
-        const typewriterElement = doccument.getElementById('typingText');
+        const typewriterElement = document.getElementById('typingText');
 
         const type = () => {
             const currentText = this.typewriterText[this.currentTextIndex];
@@ -142,7 +142,7 @@ class CyberPortfolio {
                     'Risk Assessment'
                 ],
                 datasets: [{
-                    label: Expertise Level ,
+                    label: 'Expertise Level' ,
                     data: [95, 88, 92, 80, 85, 90, 75, 82],
                     borderColor: '#00ff41',
                     backgroundColor: 'rgba(0, 255, 65, 0.1)',
@@ -185,7 +185,7 @@ class CyberPortfolio {
         });
     }
 
-    animateSkillOnScroll() {
+    animateSkillsOnScroll() {
         const skillsSection = document.getElementById('skills');
         const skillProgressBars = document.querySelectorAll('.skill-progress');
         const sectionTop = skillsSection.offsetTop;
@@ -200,7 +200,7 @@ class CyberPortfolio {
         }
     }
 
-    observerElements() {
+    observeElements() {
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -208,7 +208,7 @@ class CyberPortfolio {
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isInteresting) {
+                if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }

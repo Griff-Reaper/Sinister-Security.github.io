@@ -80,8 +80,8 @@ nav {
 }
 
 .nav-links a {
-	color: var(--text-primary)
-	text-decortion: none;
+	color: var(--text-primary);
+	text-decoration: none;
 	transition: all 0.3s ease;
 	padding: 0.5rem 1rem;
 	border: 1px solid transparent;
@@ -180,7 +180,7 @@ nav {
 }
 
 .stat-card {
-	background: rgba(0, 255, 65, 0.1)
+	background: rgba(0, 255, 65, 0.1);
 	border: var(--border-neon);
 	border-radius: 8px;
 	padding: 1.2rem;
@@ -526,7 +526,7 @@ nav {
 	border: var(--border-neon);
 	border-radius: 4px;
 	color: var(--text-primary);
-	font-family: 'Orbirtron', monospace;
+	font-family: 'Orbitron', monospace;
 	transition: all 0.3s ease;
 }
 
