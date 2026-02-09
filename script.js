@@ -136,14 +136,14 @@ class CyberPortfolio {
             type: 'radar',
             data: {
                 labels: [
-                    'Penetration Testing',
+                    'Automation',
                     'Network Security',
-                    'Digital Forensics',
+                    'Artificial Intelligence',
                     'Malware Analysis',
-                    'Python/Scripting',
+                    'Coding',
                     'Cloud Security',
                     'SIEM Management',
-                    'Risk Assessment'
+                    'Machine Learning'
                 ],
                 datasets: [{
                     label: 'Expertise Level' ,
