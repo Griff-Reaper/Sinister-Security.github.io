@@ -16,7 +16,7 @@
 [![Portfolio](https://img.shields.io/badge/Portfolio-00FF41?style=for-the-badge&logo=google-chrome&logoColor=black)](https://griff-reaper.github.io/Sinister-Security.github.io/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jace-griffith-jg11/)
 [![Credly](https://img.shields.io/badge/Credly-FF6B00?style=for-the-badge&logo=credly&logoColor=white)](https://www.credly.com/users/joyelle-griffith)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:joygriff1@yahoo.com)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:cybergriffith@gmail.com)
 
 </div>
 
@@ -35,19 +35,19 @@ class CyberReaper:
         
     def current_focus(self):
         return [
-            "Building AI-powered security automation tools",
-            "Cloud Security Posture Management (CSPM)",
-            "MLOps for threat detection systems",
-            "Autonomous security agents with LangChain"
+            "Building AI-powered red team and security automation tools",
+            "Multi-agent security orchestration platforms",
+            "AI model vulnerability testing and defense",
+            "Cloud Security Posture Management (CSPM)"
         ]
     
     def expertise(self):
         return {
-            "AI_Security": ["RAG Architecture", "LangChain Agents", "MLOps Pipelines"],
+            "AI_Security": ["Red Team Simulation", "Prompt Injection Defense", "Multi-Agent Ops", "RAG Architecture"],
             "Cloud": ["AWS Security", "Azure AI Services", "CSPM Tools"],
             "Security_Ops": ["CrowdStrike Falcon", "SIEM", "EDR", "Threat Intelligence"],
             "Languages": ["Python", "Go", "PowerShell", "Bash"],
-            "Certifications": ["CySA+", "Security+", "AI-900", "Linux Essentials"]
+            "Certifications": ["CySA+", "Security+", "AI-102", "AI-900", "Linux Essentials"]
         }
 ```
 
@@ -55,19 +55,36 @@ class CyberReaper:
 
 ## 🚀 Featured Projects
 
-### 🔐 [Cloud Security Scanner](https://github.com/Griff-Reaper/cloud-security-scanner) | **Go, AWS SDK, CIS Benchmarks**
+### 🎯 [Red Team Attack Simulator](https://github.com/Griff-Reaper/red-team-simulator) | **Python, MITRE ATLAS, Azure OpenAI, Claude API** | [📊 Live Dashboard](https://griff-reaper.github.io/red-team-simulator/)
+Enterprise-grade AI red team platform testing model vulnerabilities against MITRE ATLAS attack taxonomy.
+- 🔴 **Comprehensive attack framework** across 8 MITRE ATLAS tactics (Reconnaissance, Resource Development, Initial Access, ML Attack Staging, etc.)
+- 🤖 **Dual-model testing** for Azure OpenAI GPT-4o and Anthropic Claude models
+- 📊 **Interactive dashboard** with real-time attack results and vulnerability metrics
+- 🎯 **40+ attack scenarios** including prompt injection, model extraction, data poisoning, backdoor attacks
+- 📈 **Statistical analysis** of model defenses and security posture
+
+### 🕸️ [Nexus-Sec](https://github.com/Griff-Reaper/nexus-sec) | **Python, LangGraph, Multi-Agent, Claude Sonnet 4**
+Multi-agent security operations platform orchestrating autonomous AI agents for threat hunting and incident response.
+- 🤖 **Autonomous agent orchestration** using LangGraph for complex security workflows
+- 🔍 **Threat hunting agents** with MITRE ATT&CK integration
+- 📡 **Real-time collaboration** between specialized security agents
+- 🎯 **Automated playbook execution** for incident response
+- ⚡ **Dynamic task allocation** based on agent capabilities
+
+### 🛡️ [Prompt-Shield](https://github.com/Griff-Reaper/prompt-shield) | **Python, scikit-learn, NLP, Security**
+Advanced prompt injection detection system using ML-based classification and signature detection.
+- 🔍 **Hybrid detection** combining ML classification with pattern matching
+- 🧠 **Multi-layer defense** against adversarial prompts and jailbreaks
+- 📊 **Real-time threat scoring** with confidence metrics
+- 🎯 **Signature database** of known injection techniques
+- ⚡ **Low-latency processing** for production deployment
+
+### ☁️ [Cloud Security Scanner](https://github.com/Griff-Reaper/cloud-security-scanner) | **Go, AWS SDK, CIS Benchmarks**
 Enterprise-grade CSPM tool scanning 5 AWS services with compliance mapping and cost/risk analysis.
 - 🎯 **14 automated security checks** across S3, EC2, IAM, RDS, CloudTrail
 - 📋 **Compliance framework mapping** (CIS, PCI-DSS, SOC2, HIPAA, NIST)
 - 💰 **Cost/risk analysis** identifying $30K+ annual risk exposure
 - 📊 **Multi-format reporting** (JSON, HTML, text)
-
-### 🤖 [MLOps Pipeline with Drift Detection](https://github.com/Griff-Reaper/mlops-drift-detection) | **Python, MLflow, Prefect**
-Production-grade ML pipeline for network traffic classification with automated monitoring.
-- 🔄 **End-to-end MLOps** workflow from data ingestion to deployment
-- 📈 **98.7% F1 score** on network traffic classification
-- 🎯 **Statistical drift detection** (Kolmogorov-Smirnov, chi-square tests)
-- 🚀 **Automated retraining** recommendations
 
 ### 🧠 [Security Intelligence RAG System](https://github.com/Griff-Reaper/security-intel-rag) | **Python, Claude API, ChromaDB**
 AI-powered threat intelligence platform with semantic search across 200K+ CVE records.
@@ -82,6 +99,13 @@ Autonomous AI agent using ReAct framework for multi-step security reasoning.
 - 🔧 **MITRE ATT&CK** framework integration
 - 🎯 **Threat intelligence** lookups and automated playbooks
 - ⚡ **Multi-tool orchestration** for SOC operations
+
+### 🤖 [MLOps Pipeline with Drift Detection](https://github.com/Griff-Reaper/mlops-drift-detection) | **Python, MLflow, Prefect**
+Production-grade ML pipeline for network traffic classification with automated monitoring.
+- 🔄 **End-to-end MLOps** workflow from data ingestion to deployment
+- 📈 **98.7% F1 score** on network traffic classification
+- 🎯 **Statistical drift detection** (Kolmogorov-Smirnov, chi-square tests)
+- 🚀 **Automated retraining** recommendations
 
 ---
 
@@ -142,12 +166,12 @@ Autonomous AI agent using ReAct framework for multi-step security reasoning.
 
 | Certification | Issuer | Status |
 |--------------|--------|--------|
+| 🤖 Azure AI Engineer (AI-102) | Microsoft | ✅ **Valid until February 2027** |
 | 🛡️ CompTIA CySA+ | CompTIA | ✅ Valid until 2028 |
 | 🔐 CompTIA Security+ | CompTIA | ✅ Valid until 2028 |
 | 🤖 Azure AI Fundamentals (AI-900) | Microsoft | ✅ Valid until 2028 |
 | 💻 Linux Essentials | LPI | ✅ Permanently Valid |
-| 🔬 Azure AI Engineer (AI-102) | Microsoft | 🔄 In Progress |
-| ☁️ CompTIA SecAI+ | CompTIA | 🔄 In Progress |
+| ☁️ CompTIA SecAI+ | CompTIA | 🔄 In Progress (Feb 2026) |
 
 </div>
 
@@ -166,7 +190,7 @@ current_role:
     - "Microsoft Intune (MDM/MAM) administration"
     - "SIEM management (Sumo Logic, eSentire)"
     - "PowerShell automation and security tool development"
-    - "Disaster recovery planning and implementation"
+    - "AI security research and red team operations"
 
 previous:
   - title: "US Navy Engineman"
@@ -184,18 +208,19 @@ previous:
 └──╼ $ cat current_goals.txt
 
 [ACTIVE PROJECTS]
-├─ Enhancing MLOps pipeline with real-time monitoring
-├─ Building Rust-based EDR agent for endpoint security
-└─ Expanding cloud scanner to support Azure and GCP
+├─ Red Team Attack Simulator - Expanding MITRE ATLAS coverage
+├─ Nexus-Sec - Multi-agent threat hunting orchestration
+├─ Prompt-Shield - Advanced injection detection algorithms
+└─ Cloud Security Scanner - Azure and GCP support
 
 [LEARNING]
-├─ Advanced Go programming for security tools
-├─ Rust for systems programming
-└─ Azure OpenAI Service integration
+├─ Advanced adversarial ML techniques
+├─ Multi-agent AI orchestration patterns
+└─ Zero-trust security architecture
 
 [CERTIFICATIONS]
-├─ AI-102: Azure AI Engineer (Scheduled: Feb 13, 2026)
-└─ CompTIA SecAI+ (Available: Feb 17, 2026)
+├─ AI-102: Azure AI Engineer ✅ COMPLETED (Feb 2026)
+└─ CompTIA SecAI+ 🔄 IN PROGRESS (Feb 2026)
 ```
 
 ---
@@ -204,12 +229,13 @@ previous:
 
 <div align="center">
 
-**Looking for opportunities in AI Security, Cloud Security, or MLOps roles**
+**Looking for opportunities in AI Security, Cloud Security, or Red Team Operations**
 
 🔐 Active Secret Clearance  
 🎓 Pursuing BS Computer Science (AI Concentration)  
 🛡️ CrowdStrike Falcon Administrator  
-🤖 Building autonomous security agents  
+🤖 Building autonomous security agents & red team tools  
+🎯 Certified Azure AI Engineer (AI-102)  
 
 [![Portfolio](https://img.shields.io/badge/View_My_Portfolio-00FF41?style=for-the-badge)](https://griff-reaper.github.io/Sinister-Security.github.io/)
 [![LinkedIn](https://img.shields.io/badge/Connect_on_LinkedIn-0077B5?style=for-the-badge)](https://www.linkedin.com/in/jace-griffith-jg11/)
