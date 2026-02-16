@@ -484,6 +484,14 @@ nav {
 	color: var(--bg-primary);
 	animation: profile-float 3s ease-in-out infinite;
 	position: relative;
+	overflow: hidden;
+}
+
+.profile-img img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
 }
 
 .profile-img::before {
