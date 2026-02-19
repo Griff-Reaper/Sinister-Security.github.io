@@ -1,405 +1,684 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Griff's Sinister Cyber Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Griff's Sinister Cyber Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+:root {
+  --primary: #00ff41;
+  --primary-dim: rgba(0,255,65,0.15);
+  --bg: #0a0a0a;
+  --bg2: #0d1117;
+  --bg3: #111820;
+  --border: #1a2332;
+  --text: #c9d1d9;
+  --text2: #8b949e;
+  --orange: #f97316;
+  --red: #ff4444;
+  --blue: #58a6ff;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Scanline sweep */
+body::before {
+  content:'';
+  position:fixed;
+  left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,65,0.2),transparent);
+  animation:scanline 7s linear infinite;
+  z-index:9998;
+  pointer-events:none;
+}
+
+/* Grid bg */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,65,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.025) 1px, transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+  z-index:0;
+}
+
+@keyframes scanline { 0%{top:-2px} 100%{top:100vh} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes neonPulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+@keyframes glitchA { 0%,89%,91%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)} 90%{clip-path:inset(20% 0 50% 0);transform:translate(-3px,0)} }
+@keyframes glitchB { 0%,89%,91%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)} 90%{clip-path:inset(50% 0 20% 0);transform:translate(3px,0)} }
+@keyframes revealUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes datafall { 0%{transform:translateY(-100%);opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{transform:translateY(100vh);opacity:0} }
+@keyframes countUp { from{opacity:0} to{opacity:1} }
+@keyframes borderGlow { 0%,100%{box-shadow:0 0 8px rgba(0,255,65,0.2)} 50%{box-shadow:0 0 24px rgba(0,255,65,0.5),0 0 48px rgba(0,255,65,0.1)} }
+
+/* ── CURSOR ── */
+.cursor-dot { position:fixed; width:5px; height:5px; background:#00ff41; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); box-shadow:0 0 8px rgba(0,255,65,0.8); transition:transform .1s; }
+.cursor-ring { position:fixed; width:24px; height:24px; border:1px solid rgba(0,255,65,0.5); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:all .12s ease; }
+
+/* ── DATA STREAMS ── */
+.stream { position:fixed; top:0; font-size:9px; color:rgba(0,255,65,0.1); pointer-events:none; z-index:1; writing-mode:vertical-lr; animation:datafall linear infinite; }
+
+/* ── NAV ── */
+header { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(10,10,10,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+nav { display:flex; align-items:center; justify-content:space-between; padding:14px 48px; max-width:1400px; margin:0 auto; }
+.logo { font-family:'Orbitron',monospace; font-size:16px; font-weight:900; color:var(--primary); letter-spacing:3px; text-shadow:0 0 12px rgba(0,255,65,0.5); animation:neonPulse 3s ease-in-out infinite; }
+.nav-links { list-style:none; display:flex; gap:32px; }
+.nav-links a { color:var(--text2); text-decoration:none; font-size:11px; letter-spacing:2px; transition:color .2s; position:relative; }
+.nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:1px; background:var(--primary); box-shadow:0 0 6px rgba(0,255,65,0.6); transition:width .3s; }
+.nav-links a:hover { color:var(--primary); }
+.nav-links a:hover::after { width:100%; }
+.menu-toggle { display:none; background:none; border:1px solid var(--border); color:var(--primary); padding:6px 10px; cursor:pointer; font-family:inherit; }
+
+/* ── HERO ── */
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:100px 48px 60px; position:relative; text-align:center; }
+
+.hex-label { font-size:10px; letter-spacing:4px; color:rgba(0,255,65,0.5); margin-bottom:16px; }
+.hex-label::before,.hex-label::after { content:'⬡'; margin:0 8px; color:rgba(0,255,65,0.3); }
+
+.glitch-text { font-family:'Orbitron',monospace; font-size:clamp(42px,8vw,96px); font-weight:900; color:var(--primary); letter-spacing:6px; text-shadow:0 0 20px rgba(0,255,65,0.4); position:relative; animation:neonPulse 4s ease-in-out infinite; margin-bottom:32px; }
+.glitch-text::before { content:attr(data-text); position:absolute; inset:0; color:#ff0040; animation:glitchA 4s infinite; }
+.glitch-text::after  { content:attr(data-text); position:absolute; inset:0; color:#00d4ff; animation:glitchB 4s infinite .05s; }
+
+/* Terminal */
+.terminal { background:rgba(13,17,23,0.9); border:1px solid rgba(0,255,65,0.2); border-radius:8px; padding:16px 24px; margin:0 auto 40px; min-width:360px; max-width:540px; text-align:left; animation:float 6s ease-in-out infinite; box-shadow:0 0 30px rgba(0,255,65,0.05),inset 0 0 30px rgba(0,0,0,0.5); }
+.terminal-header { display:flex; align-items:center; margin-bottom:12px; }
+.btn-circle { width:10px; height:10px; border-radius:50%; margin-right:6px; }
+.btn-circle:nth-child(1){background:#ff5f56} .btn-circle:nth-child(2){background:#ffbd2e} .btn-circle:nth-child(3){background:#27c93f}
+.terminal-prompt { color:var(--text2); font-size:11px; margin-left:8px; }
+.typing-text { color:var(--primary); font-size:13px; min-height:20px; }
+.typing-text::after { content:'█'; animation:neonPulse .7s step-end infinite; }
+
+/* Stats */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:700px; margin:0 auto 32px; }
+.stat-card { background:rgba(13,17,23,0.8); border:1px solid rgba(0,255,65,0.15); border-radius:6px; padding:20px 16px; transition:transform .3s,box-shadow .3s; }
+.stat-card:hover { transform:translateY(-5px); box-shadow:0 8px 30px rgba(0,255,65,0.2); }
+.stat-number { display:block; font-family:'Orbitron',monospace; font-size:28px; font-weight:700; color:var(--primary); text-shadow:0 0 10px rgba(0,255,65,0.5); }
+.stat-label { font-size:9px; letter-spacing:1px; color:var(--text2); }
+
+.scroll-indicator { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0.35; animation:float 2.5s ease-in-out infinite; }
+.scroll-indicator span { font-size:8px; letter-spacing:4px; color:var(--primary); }
+.scroll-arrow { width:1px; height:32px; background:linear-gradient(to bottom,var(--primary),transparent); }
+
+/* ── SECTIONS ── */
+.section { padding:90px 48px; max-width:1200px; margin:0 auto; position:relative; z-index:2; }
+.section h2 { font-family:'Orbitron',monospace; font-size:clamp(22px,4vw,34px); font-weight:700; color:var(--primary); letter-spacing:4px; margin-bottom:48px; text-align:center; text-shadow:0 0 20px rgba(0,255,65,0.3); }
+
+/* ── ABOUT ── */
+.about-content { display:grid; grid-template-columns:280px 1fr; gap:56px; align-items:start; }
+.profile-img { position:relative; }
+.profile-img img { width:100%; border-radius:8px; border:1px solid rgba(0,255,65,0.2); display:block; }
+.profile-img::before { content:''; position:absolute; inset:-4px; background:conic-gradient(from 0deg,var(--primary),transparent 30%,transparent 70%,var(--primary)); border-radius:12px; animation:spin 6s linear infinite; z-index:-1; }
+.about-text p { font-family:sans-serif; font-size:14px; line-height:1.8; color:var(--text); margin-bottom:16px; }
+.highlight { color:var(--primary); }
+.skills-highlight { margin-top:24px; background:rgba(0,255,65,0.03); border:1px solid rgba(0,255,65,0.12); border-radius:6px; padding:20px; }
+.skills-highlight h3 { font-size:11px; letter-spacing:2px; color:var(--primary); margin-bottom:12px; }
+.skills-highlight ul { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.skills-highlight li { font-size:11px; color:var(--text2); padding-left:12px; position:relative; }
+.skills-highlight li::before { content:'▸'; position:absolute; left:0; color:var(--primary); }
+
+/* ── SKILLS ── */
+.skills-container { display:grid; grid-template-columns:1fr 380px; gap:48px; align-items:center; }
+.skill-item { margin-bottom:20px; }
+.skill-name { display:flex; justify-content:space-between; font-size:11px; color:var(--text2); margin-bottom:6px; }
+.skill-bar { height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+.skill-progress { height:100%; background:linear-gradient(90deg,#00ff41,#00cc33); border-radius:3px; width:0; transition:width 1.4s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; }
+.skill-progress::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); background-size:200%; animation:shimmer 2s linear infinite; }
+.chart-container { position:relative; }
+
+/* ── TIMELINE ── */
+.timeline { max-width:750px; margin:0 auto; position:relative; }
+.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,var(--primary),transparent); }
+.timeline-item { padding:0 0 36px 32px; position:relative; }
+.timeline-item::before { content:''; position:absolute; left:-5px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px rgba(0,255,65,0.6); }
+.timeline-content { background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:6px; padding:20px 24px; transition:transform .3s,box-shadow .3s; position:relative; overflow:hidden; }
+.timeline-content::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(0,255,65,0.04),transparent); opacity:0; transition:opacity .3s; }
+.timeline-content:hover { transform:translateX(6px); box-shadow:-3px 0 20px rgba(0,255,65,0.15); }
+.timeline-content:hover::before { opacity:1; }
+.timeline-date { font-size:10px; letter-spacing:2px; color:var(--primary); margin-bottom:6px; }
+.timeline-title { font-size:15px; color:var(--text); margin-bottom:4px; }
+.timeline-content h4 { font-size:11px; color:var(--primary); margin-bottom:8px; letter-spacing:1px; }
+.timeline-content p { font-family:sans-serif; font-size:12px; color:var(--text2); line-height:1.6; }
+
+/* ── PROJECTS ── */
+.projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+.project-card { background:rgba(13,17,23,0.9); border:1px solid var(--border); border-radius:8px; padding:24px; position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; }
+.project-card > * { position:relative; z-index:1; }
+.project-card::after { content:''; position:absolute; width:220px; height:220px; background:radial-gradient(circle,rgba(0,255,65,0.08) 0%,transparent 70%); border-radius:50%; pointer-events:none; left:var(--mx,50%); top:var(--my,50%); transform:translate(-50%,-50%); opacity:0; transition:opacity .3s; z-index:0; }
+.project-card:hover::after { opacity:1; }
+.project-card:hover { transform:translateY(-7px); box-shadow:0 12px 40px rgba(0,255,65,0.15); }
+
+/* Corner brackets */
+.corner { position:absolute; width:14px; height:14px; opacity:0.4; transition:opacity .3s; }
+.corner.tl { top:8px; left:8px; border-top:2px solid var(--primary); border-left:2px solid var(--primary); }
+.corner.tr { top:8px; right:8px; border-top:2px solid var(--primary); border-right:2px solid var(--primary); }
+.corner.bl { bottom:8px; left:8px; border-bottom:2px solid var(--primary); border-left:2px solid var(--primary); }
+.corner.br { bottom:8px; right:8px; border-bottom:2px solid var(--primary); border-right:2px solid var(--primary); }
+.project-card:hover .corner { opacity:1; }
+
+/* Featured variants */
+.project-card.aria-card { border-color:rgba(249,115,22,0.3); background:linear-gradient(135deg,rgba(249,115,22,0.04),rgba(13,17,23,0.95)); }
+.project-card.aria-card:hover { box-shadow:0 12px 40px rgba(249,115,22,0.18); }
+.project-card.aria-card .corner { border-color:rgba(249,115,22,0.7) !important; }
+.project-card.aria-card::after { background:radial-gradient(circle,rgba(249,115,22,0.1) 0%,transparent 70%); }
+
+.project-card.featured-card { border-color:rgba(0,255,65,0.3); background:linear-gradient(135deg,rgba(0,255,65,0.04),rgba(13,17,23,0.95)); animation:borderGlow 3s ease-in-out infinite; }
+
+.badge { display:inline-block; font-size:9px; letter-spacing:2px; padding:3px 8px; border-radius:2px; margin-bottom:10px; }
+.badge-orange { color:var(--orange); background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); animation:neonPulse 2s ease-in-out infinite; }
+.badge-green  { color:var(--primary); background:rgba(0,255,65,0.08); border:1px solid rgba(0,255,65,0.25); animation:neonPulse 2s ease-in-out infinite; }
+
+.project-status { display:inline-block; font-size:9px; letter-spacing:2px; padding:3px 8px; border-radius:2px; margin-bottom:12px; }
+.status-active { color:var(--primary); background:rgba(0,255,65,0.1); border:1px solid rgba(0,255,65,0.3); }
+.status-completed { color:#58a6ff; background:rgba(88,166,255,0.1); border:1px solid rgba(88,166,255,0.3); }
+
+.project-card h3 { font-size:16px; color:var(--text); margin-bottom:10px; letter-spacing:1px; }
+.project-card p { font-family:sans-serif; font-size:12px; color:var(--text2); line-height:1.7; margin-bottom:16px; }
+.project-tech { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.tech-tag { font-size:10px; color:var(--text2); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:3px 8px; border-radius:3px; transition:all .2s; cursor:default; }
+.tech-tag:hover { color:var(--primary); background:rgba(0,255,65,0.08); border-color:rgba(0,255,65,0.3); transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,255,65,0.1); }
+.project-links { display:flex; gap:12px; flex-wrap:wrap; }
+.project-link { color:var(--primary); font-size:11px; text-decoration:none; letter-spacing:1px; transition:text-shadow .2s; }
+.project-link:hover { text-shadow:0 0 12px rgba(0,255,65,0.8); }
+.dashboard-link { color:var(--blue); }
+
+/* ── CERTS ── */
+.certs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+.cert-card { background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; }
+.cert-card::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:conic-gradient(from 0deg,transparent,rgba(0,255,65,0.06) 60deg,transparent 120deg); animation:spin 10s linear infinite; opacity:0; transition:opacity .4s; }
+.cert-card:hover::before { opacity:1; }
+.cert-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 12px 40px rgba(0,255,65,0.15); }
+.cert-icon { font-size:32px; margin-bottom:12px; display:block; }
+.cert-card h3 { font-size:12px; letter-spacing:1px; color:var(--text); margin-bottom:6px; }
+.cert-card p { font-family:sans-serif; font-size:11px; color:var(--text2); margin-bottom:12px; }
+.cert-status { font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:3px; display:inline-block; }
+.certified    { color:var(--primary); background:rgba(0,255,65,0.1); border:1px solid rgba(0,255,65,0.3); }
+.in-progress  { color:var(--orange); background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); animation:neonPulse 2s ease-in-out infinite; }
+
+/* ── CONTACT ── */
+.contact-container { max-width:600px; margin:0 auto; }
+.form-group { margin-bottom:20px; }
+.form-group label { display:block; font-size:10px; letter-spacing:2px; color:var(--primary); margin-bottom:6px; }
+.form-group input, .form-group textarea { width:100%; background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:4px; padding:12px 16px; color:var(--text); font-family:'Share Tech Mono',monospace; font-size:12px; transition:border-color .3s,box-shadow .3s; resize:vertical; }
+.form-group input:focus, .form-group textarea:focus { outline:none; border-color:rgba(0,255,65,0.4); box-shadow:0 0 0 1px rgba(0,255,65,0.2),0 0 20px rgba(0,255,65,0.08); }
+.btn-primary { width:100%; padding:14px; background:transparent; border:1px solid var(--primary); color:var(--primary); font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:3px; cursor:pointer; border-radius:4px; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
+.btn-primary::before { content:''; position:absolute; inset:0; background:var(--primary); transform:scaleX(0); transform-origin:left; transition:transform .3s; z-index:0; }
+.btn-primary:hover { color:#000; }
+.btn-primary:hover::before { transform:scaleX(1); }
+.btn-primary span { position:relative; z-index:1; }
+
+/* ── FOOTER ── */
+footer { border-top:1px solid var(--border); padding:32px 48px; text-align:center; }
+footer p { font-size:10px; letter-spacing:2px; color:var(--text2); margin-bottom:16px; }
+.social-links { display:flex; justify-content:center; gap:12px; }
+.social-links a { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid rgba(0,255,65,0.2); border-radius:4px; text-decoration:none; font-size:16px; transition:all .3s; }
+.social-links a:hover { border-color:rgba(0,255,65,0.6); box-shadow:0 0 16px rgba(0,255,65,0.25); transform:translateY(-3px); }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity .6s ease,transform .6s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ── SCROLL PROGRESS ── */
+.scroll-progress { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--primary),#00cc33); z-index:200; transition:width .1s; }
+
+@media(max-width:900px) {
+  nav { padding:12px 20px; }
+  .nav-links { display:none; flex-direction:column; position:fixed; top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.97);align-items:center;justify-content:center;gap:24px; }
+  .nav-links.open { display:flex; }
+  .menu-toggle { display:block; }
+  .about-content { grid-template-columns:1fr; }
+  .skills-container { grid-template-columns:1fr; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .hero { padding:80px 24px 60px; }
+  .section { padding:70px 24px; }
+  .chart-container { display:none; }
+}
+</style>
 </head>
 <body>
-    <!-- Particle Background -->
-    <canvas class="particle-bg" id="particles"></canvas>
-    
-    <!-- Matrix Background -->
-    <canvas class="matrix-bg" id="matrix"></canvas>
 
-    <!-- Scroll Progress Indicator -->
-    <div class="scroll-progress" id="scrollProgress"></div>
+<!-- Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- Header -->
-    <header>
-        <nav>
-            <div class="logo">CYBER_REAPER</div>
-            <ul class="nav-links" id="navlinks">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About Me</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#certifications">Certs</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="menu-toggle" id="menuToggle">☰</button>
-        </nav>
-    </header>
+<!-- Data streams -->
+<div class="stream" style="left:2%;animation-duration:14s;animation-delay:-4s">01001010 11001100 00110101 10101001 01010110</div>
+<div class="stream" style="left:97%;animation-duration:18s;animation-delay:-9s">11001010 00110101 10101001 01011010 10001011</div>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 class="glitch-text" data-text="CYBER REAPER">CYBER REAPER</h1>
-            <div class="terminal">
-                <div class="terminal-header">
-                    <div class="terminal-buttons">
-                        <div class="btn-circle"></div>
-                        <div class="btn-circle"></div>
-                        <div class="btn-circle"></div>
-                    </div>
-                    <span style="margin-left: 1rem; color: var(--text-secondary);">reaper@cyber:~$</span>
-                </div>
-                <div class="typing-text" id="typingText"></div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card" data-target="500">
-                    <span class="stat-number">0</span>
-                    <span class="stat-label">Vulnerabilities Found</span>
-                </div>
-                <div class="stat-card" data-target="99.8">
-                    <span class="stat-number">0</span>
-                    <span class="stat-label">Threat Detection</span>
-                </div>
-                <div class="stat-card" data-target="50">
-                    <span class="stat-number">0</span>
-                    <span class="stat-label">Systems Secured</span>
-                </div>
-                <div class="stat-card" data-target="24">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Network Monitoring</span>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Scroll progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
 
-    <!-- About Section -->
-    <section class="section" id="about">
-        <h2>System Profile</h2>
-        <div class="about-content">
-            <div class="profile-img">
-                <img src="profile.jpg" alt="Jace Griffith - Cyber Reaper Profile">
-            </div>
-            <div class="about-text">
-                <p>I am a <span class="highlight">cybersecurity specialist and AI security engineer</span> with a passion for protecting digital infrastructures and building intelligent security systems. My journey began in 2019, and since then, I've been on the frontlines of the digital battlefield, now specializing in AI-powered security automation and cloud security engineering.</p>
-                
-                <p>My expertise spans across <span class="highlight">cloud security</span>, <span class="highlight">AI/ML security operations</span>, and <span class="highlight">network defense</span>. I leverage ML-based threat detection across enterprise environments while building autonomous AI security tools. I specialize in developing security automation, implementing CSPM solutions, and architecting RAG-based threat intelligence systems.</p>
-                
-                <p>When I'm not securing networks or building AI security agents, I enjoy contributing to the cybersecurity community through open-source projects and staying ahead of emerging threats. My goal is simple: <span class="highlight">make the digital world safer through intelligent automation, one system at a time.</span></p>
-                
-                <div class="skills-highlight">
-                    <h3>Core Competencies:</h3>
-                    <ul>
-                        <li>Cloud Security & Infrastructure Protection</li>
-                        <li>AI-Powered Security Automation</li>
-                        <li>Threat Detection & Response</li>
-                        <li>Security Architecture Design</li>
-                        <li>Compliance & Risk Management</li>
-                        <li>Network Security & Monitoring</li>
-                        <li>Security Tool Development</li>
-                        <li>Incident Response & Forensics</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Header -->
+<header>
+  <nav>
+    <div class="logo">CYBER_REAPER</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About Me</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certifications">Certs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+</header>
 
-    <!-- Skills Section -->
-    <section class="section" id="skills">
-        <h2>Technical Arsenal</h2>
-        <div class="skills-container">
-            <div class="skills-bars">
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Automation</span>
-                        <span>95%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="95%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Network Security</span>
-                        <span>88%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="88%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Artificial Intelligence</span>
-                        <span>92%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="92%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Malware Analysis</span>
-                        <span>80%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="80%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Coding</span>
-                        <span>85%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="85%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Cloud Security</span>
-                        <span>90%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="90%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>SIEM Management</span>
-                        <span>75%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="75%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Machine Learning</span>
-                        <span>82%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-width="82%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="skillsChart"></canvas>
-            </div>
-        </div>
-    </section>
+<!-- Hero -->
+<section class="hero" id="home">
+  <div style="z-index:2;width:100%">
+    <div class="hex-label">AI SECURITY ENGINEER</div>
+    <h1 class="glitch-text" data-text="CYBER REAPER">CYBER REAPER</h1>
+    <div class="terminal" style="animation:float 6s ease-in-out infinite">
+      <div class="terminal-header">
+        <div class="btn-circle"></div>
+        <div class="btn-circle"></div>
+        <div class="btn-circle"></div>
+        <span class="terminal-prompt">reaper@cyber:~$</span>
+      </div>
+      <div class="typing-text" id="typingText"></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><span class="stat-number" id="s1">0</span><span class="stat-label">Vulnerabilities Found</span></div>
+      <div class="stat-card"><span class="stat-number" id="s2">0</span><span class="stat-label">Threat Detection %</span></div>
+      <div class="stat-card"><span class="stat-number" id="s3">0</span><span class="stat-label">Systems Secured</span></div>
+      <div class="stat-card"><span class="stat-number">24/7</span><span class="stat-label">Network Monitoring</span></div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
 
-    <!-- Experience Section -->
-    <section class="section" id="experience">
-        <h2>Battle History</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">2025 - Present</div>
-                    <h3 class="timeline-title">System Administrator</h3>
-                    <h4>SEPA Labs</h4>
-                    <p>Managing infrastructure and security protocols for 100+ workstations and 30+ servers in a medical lab. Currently the CrowdStrike Falcon Administrator.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">2025 - 2025</div>
-                    <h3 class="timeline-title">Cybersecurity Specialist Student</h3>
-                    <h4>MyComputerCareer</h4>
-                    <p>Worked on obtaining certifications such as CompTIA Security+, CySA+, and Linux Essentials.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">2020 - 2024</div>
-                    <h3 class="timeline-title">US Navy Sailor</h3>
-                    <p>Maintained diesel engines and other critical systems aboard naval vessels.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">2019 - 2020</div>
-                    <h3 class="timeline-title">Front Desk Receptionist</h3>
-                    <p>Provided cybersecurity consulting services to small businesses, including configuring firewalls and security awareness training.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- About -->
+<section class="section" id="about">
+  <h2>System Profile</h2>
+  <div class="about-content reveal">
+    <div class="profile-img">
+      <img src="profile.jpg" alt="Jace Griffith">
+    </div>
+    <div class="about-text">
+      <p>I am a <span class="highlight">cybersecurity specialist and AI security engineer</span> with a passion for protecting digital infrastructures and building intelligent security systems. Since 2019 I've been on the frontlines of the digital battlefield, now specializing in AI-powered security automation and cloud security engineering.</p>
+      <p>My expertise spans <span class="highlight">AI/ML security operations</span>, <span class="highlight">cloud security</span>, and <span class="highlight">network defense</span>. I build autonomous AI security tools while leveraging ML-based threat detection across enterprise environments — including AI honeypots that profile attackers in real time.</p>
+      <p>Navy veteran. Active Secret clearance. My goal is simple: <span class="highlight">make the digital world safer through intelligent automation, one system at a time.</span></p>
+      <div class="skills-highlight">
+        <h3>Core Competencies:</h3>
+        <ul>
+          <li>AI Honeypot & Deception Tech</li>
+          <li>LLM Security & Prompt Defense</li>
+          <li>AI-Powered Security Automation</li>
+          <li>Cloud Security & CSPM</li>
+          <li>Threat Detection & Response</li>
+          <li>Security Architecture Design</li>
+          <li>Network Security & Monitoring</li>
+          <li>Incident Response & Forensics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Projects Section -->
-    <section class="section" id="projects">
-        <h2>Mission Archives</h2>
-        <div class="projects-grid">
-            <div class="project-card spotlight-card">
-                <div class="project-status status-active">ACTIVE</div>
-                <h3>Red Team Attack Simulator</h3>
-                <p>Enterprise-grade AI red team platform testing Azure OpenAI and Claude models against MITRE ATLAS attack taxonomy with comprehensive vulnerability analysis and interactive dashboard.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">MITRE ATLAS</span>
-                    <span class="tech-tag">Azure OpenAI</span>
-                    <span class="tech-tag">Claude API</span>
-                </div>
-                <div class="project-links">
-                    <a href="https://github.com/Griff-Reaper/red-team-simulator" target="_blank" class="project-link">View on GitHub →</a>
-                    <a href="https://griff-reaper.github.io/red-team-simulator/" target="_blank" class="project-link dashboard-link">Live Dashboard 📊</a>
-                </div>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-active">ACTIVE</div>
-                <h3>Nexus-Sec</h3>
-                <p>Multi-agent security operations platform orchestrating autonomous AI agents for threat hunting, incident response, and security automation using LangGraph and Claude.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">LangGraph</span>
-                    <span class="tech-tag">Multi-Agent</span>
-                    <span class="tech-tag">Claude Sonnet 4</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/nexus-sec" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-active">ACTIVE</div>
-                <h3>Prompt-Shield</h3>
-                <p>Advanced prompt injection detection system using ML-based classification and signature detection to protect AI systems from adversarial attacks and malicious inputs.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">scikit-learn</span>
-                    <span class="tech-tag">NLP</span>
-                    <span class="tech-tag">Security</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/prompt-shield" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-completed">COMPLETED</div>
-                <h3>Cloud Security Scanner</h3>
-                <p>Enterprise-grade AWS security auditing tool written in Go. Automatically scans your AWS infrastructure for security misconfigurations, generates detailed reports, and provides actionable remediation guidance.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Go</span>
-                    <span class="tech-tag">AWS SDK</span>
-                    <span class="tech-tag">REST API</span>
-                    <span class="tech-tag">CIS Benchmarks</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/cloud-security-scanner" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-completed">COMPLETED</div>
-                <h3>Security Intel RAG</h3>
-                <p>A production-grade RAG system integrating real-time CVE data from NVD API with vector search for intelligent threat analysis.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">Claude API</span>
-                    <span class="tech-tag">ChromaDB</span>
-                    <span class="tech-tag">LangChain</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/security-intel-rag" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-completed">COMPLETED</div>
-                <h3>AI SecOps Agent</h3>
-                <p>An autonomous AI agent using LangGraph's ReAct framework for multi-step security reasoning and tool orchestration.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">LangGraph</span>
-                    <span class="tech-tag">ReAct</span>
-                    <span class="tech-tag">Claude Sonnet 4</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/ai-secops-agent" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-            <div class="project-card spotlight-card">
-                <div class="project-status status-active">ACTIVE</div>
-                <h3>MLOps Pipeline w/ Drift Detection</h3>
-                <p>Production-grade ML pipeline for network traffic classification with automated training, drift detection, and deployment using MLflow and Prefect orchestration.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">MLFlow</span>
-                    <span class="tech-tag">Prefect</span>
-                    <span class="tech-tag">scikit-learn</span>
-                </div>
-                <a href="https://github.com/Griff-Reaper/mlops-drift-detection" target="_blank" class="project-link">View on GitHub →</a>
-            </div>
-        </div>
-    </section>
+<!-- Skills -->
+<section class="section" id="skills">
+  <h2>Technical Arsenal</h2>
+  <div class="skills-container">
+    <div class="skills-bars reveal">
+      <div class="skill-item"><div class="skill-name"><span>AI / LLM Security</span><span>94%</span></div><div class="skill-bar"><div class="skill-progress" data-width="94%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Security Automation</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" data-width="95%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Cloud Security</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" data-width="90%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Endpoint Detection (EDR)</span><span>92%</span></div><div class="skill-bar"><div class="skill-progress" data-width="92%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Network Security</span><span>88%</span></div><div class="skill-bar"><div class="skill-progress" data-width="88%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Malware Analysis</span><span>80%</span></div><div class="skill-bar"><div class="skill-progress" data-width="80%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>SIEM Management</span><span>85%</span></div><div class="skill-bar"><div class="skill-progress" data-width="85%"></div></div></div>
+      <div class="skill-item"><div class="skill-name"><span>Machine Learning</span><span>82%</span></div><div class="skill-bar"><div class="skill-progress" data-width="82%"></div></div></div>
+    </div>
+    <div class="chart-container reveal">
+      <canvas id="skillsChart"></canvas>
+    </div>
+  </div>
+</section>
 
-    <!-- Certifications Section -->
-    <section class="section" id="certifications">
-        <h2>Security Clearances</h2>
-        <div class="certs-grid">
-            <div class="cert-card">
-                <div class="cert-icon">🛡️</div>
-                <h3>CompTIA CySA+</h3>
-                <p>Certified Cybersecurity Analyst</p>
-                <div class="cert-status certified">Certified - Valid until 2028</div>
-            </div>
-            <div class="cert-card">
-                <div class="cert-icon">🤖</div>
-                <h3>Microsoft Certified: AI Engineer (AI-102)</h3>
-                <p>Azure AI Engineer Associate</p>
-                <div class="cert-status certified">Certified - Valid until 2027</div>
-            </div>
-            <div class="cert-card">
-                <div class="cert-icon">🔐</div>
-                <h3>Microsoft Certified: AI Fundamentals (AI-900)</h3>
-                <p>Azure AI Fundamentals</p>
-                <div class="cert-status certified">Certified - Valid until 2028</div>
-            </div>
-            <div class="cert-card">
-                <div class="cert-icon">💻</div>
-                <h3>CompTIA Security+</h3>
-                <p>CompTIA Security+ Certification</p>
-                <div class="cert-status certified">Certified - Valid until 2028</div>
-            </div>
-            <div class="cert-card">
-                <div class="cert-icon">🌐</div>
-                <h3>LPI Linux Essentials</h3>
-                <p>LPI Linux Essentials Certification</p>
-                <div class="cert-status certified">Certified - Permanently Valid</div>
-            </div>
-            <div class="cert-card">
-                <div class="cert-icon">☁️</div>
-                <h3>CompTIA SecAI+</h3>
-                <p>AI Security Specialist</p>
-                <div class="cert-status in-progress">In Progress - Feb 2026</div>
-            </div>
-        </div>
-    </section>
+<!-- Experience -->
+<section class="section" id="experience">
+  <h2>Battle History</h2>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-content">
+        <div class="corner tl"></div><div class="corner br"></div>
+        <div class="timeline-date">2025 — PRESENT</div>
+        <h3 class="timeline-title">System Administrator</h3>
+        <h4>Southeast Pathology Association</h4>
+        <p>Primary CrowdStrike Falcon administrator across 100+ workstations and 30+ servers. Administer VMware vSphere 7, Cisco Palo Alto firewalls, Intune MDM, Sumo Logic SIEM, and Exchange Online in a HIPAA healthcare environment.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-content">
+        <div class="corner tl"></div><div class="corner br"></div>
+        <div class="timeline-date">2024 — 2025</div>
+        <h3 class="timeline-title">Cybersecurity Specialist Student</h3>
+        <h4>MyComputerCareer</h4>
+        <p>400+ hours hands-on labs. Earned CompTIA Security+, CySA+, and LPI Linux Essentials. Studied ethical hacking, penetration testing, and AI-assisted security tooling.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-content">
+        <div class="corner tl"></div><div class="corner br"></div>
+        <div class="timeline-date">2020 — 2024</div>
+        <h3 class="timeline-title">Engineman — US Navy</h3>
+        <h4>United States Navy</h4>
+        <p>Maintained diesel propulsion systems on naval vessels. Operated with active Secret security clearance in high-accountability environments requiring precision and analytical problem-solving.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-content">
+        <div class="corner tl"></div><div class="corner br"></div>
+        <div class="timeline-date">2019 — 2020</div>
+        <h3 class="timeline-title">Front Desk Clerk</h3>
+        <h4>Riverview Hotel</h4>
+        <p>Managed guest data confidentiality, reservation systems, and front desk operations.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Contact Section -->
-    <section class="section" id="contact">
-        <h2>Establish Connection</h2>
-        <div class="contact-container">
-            <form id="contactForm">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="subject">Subject</label>
-                    <input type="text" id="subject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="6" required></textarea>
-                </div>
-                <button type="submit" class="btn-primary ripple">Send Message</button>
-            </form>
-        </div>
-    </section>
+<!-- Projects -->
+<section class="section" id="projects">
+  <h2>Mission Archives</h2>
+  <div class="projects-grid">
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Cyber Reaper. All rights reserved.</p>
-        <div class="social-links">
-            <a href="https://github.com/Griff-Reaper" title="GitHub">⚡</a>
-            <a href="https://www.linkedin.com/in/jace-griffith-jg11" title="LinkedIn">🔗</a>
-            <a href="https://www.credly.com/users/joyelle-griffith" title="Credly">🏆</a>
-            <a href="mailto:cybergriffith@gmail.com" title="Email">✉️</a>
-        </div>
-    </footer>
+    <div class="project-card aria-card">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="badge badge-orange">⬡ FLAGSHIP BUILD</div>
+      <div class="project-status status-active">ACTIVE</div>
+      <h3>ARIA Honeypot</h3>
+      <p>AI-powered corporate IT decoy using Claude to profile social engineering attackers in real time. Deploys fake credentials, builds behavioral dossiers, tracks MITRE ATT&CK techniques, and streams live IOCs to a SOC dashboard.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Claude API</span><span class="tech-tag">React</span><span class="tech-tag">WebSocket</span><span class="tech-tag">MITRE ATT&CK</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/aria-honeypot" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
 
-    <script src="script.js"></script>
+    <div class="project-card featured-card">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="badge badge-green">⬡ FEATURED</div>
+      <div class="project-status status-active">ACTIVE</div>
+      <h3>Red Team Attack Simulator</h3>
+      <p>Enterprise AI red team platform executing 40+ attack scenarios from MITRE ATLAS taxonomy. Features 5 APT personas (APT28, Lazarus, Volt Typhoon, Scattered Spider) with 15.9% bypass rate discovery and a live dashboard.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">MITRE ATLAS</span><span class="tech-tag">Azure OpenAI</span><span class="tech-tag">Claude API</span><span class="tech-tag">Multi-Agent</span>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/Griff-Reaper/red-team-simulator" target="_blank" class="project-link">View on GitHub →</a>
+        <a href="https://griff-reaper.github.io/red-team-simulator/" target="_blank" class="project-link dashboard-link">Live Dashboard 📊</a>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-active">ACTIVE</div>
+      <h3>Nexus-Sec</h3>
+      <p>Multi-agent SIEM platform with automated incident response cutting manual intervention from 30+ minutes to under 5 seconds. Ingests ARIA Honeypot IOCs for cross-platform threat correlation.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">Claude Sonnet 4</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/nexus-sec" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-active">ACTIVE</div>
+      <h3>Prompt Firewall</h3>
+      <p>Enterprise LLM security gateway with multi-layer threat detection achieving 95%+ accuracy and &lt;10ms latency. Classifies prompt injection, jailbreaks, and PII leakage with policy enforcement.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">ML</span><span class="tech-tag">NLP</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/prompt-firewall" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-active">ACTIVE</div>
+      <h3>Prompt-Shield</h3>
+      <p>Stateless ML detection API achieving &lt;10ms p99 latency at 10K+ req/sec. Three-tier pipeline with parallel execution and batch processing for adversarial prompt classification.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">scikit-learn</span><span class="tech-tag">NLP</span><span class="tech-tag">Adversarial ML</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/prompt-shield" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-completed">COMPLETED</div>
+      <h3>Cloud Security Scanner</h3>
+      <p>CSPM tool in Go scanning 5 AWS services with 14 checks mapped to CIS, PCI-DSS, SOC2, HIPAA, NIST. Identifies $30K+ annual risk reduction with compliance-ready reporting.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Go</span><span class="tech-tag">AWS SDK</span><span class="tech-tag">CIS Benchmarks</span><span class="tech-tag">REST API</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/cloud-security-scanner" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-completed">COMPLETED</div>
+      <h3>Security Intel RAG</h3>
+      <p>Production RAG system over 200,000+ CVE records with ChromaDB vector search and Claude-powered threat analysis for natural language vulnerability queries.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">ChromaDB</span><span class="tech-tag">LangChain</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/security-intel-rag" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+    <div class="project-card">
+      <div class="corner tl"></div><div class="corner br"></div>
+      <div class="project-status status-completed">COMPLETED</div>
+      <h3>AI SecOps Agent</h3>
+      <p>Autonomous ReAct agent for multi-step security reasoning with MITRE ATT&CK lookups, threat intelligence queries, and automated incident response playbook generation.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">ReAct</span><span class="tech-tag">Claude Sonnet 4</span>
+      </div>
+      <a href="https://github.com/Griff-Reaper/ai-secops-agent" target="_blank" class="project-link">View on GitHub →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- Certs -->
+<section class="section" id="certifications">
+  <h2>Security Clearances</h2>
+  <div class="certs-grid">
+    <div class="cert-card reveal"><span class="cert-icon">🛡️</span><h3>CompTIA CySA+</h3><p>Certified Cybersecurity Analyst</p><div class="cert-status certified">Certified — Valid until 2028</div></div>
+    <div class="cert-card reveal"><span class="cert-icon">🤖</span><h3>Azure AI Engineer (AI-102)</h3><p>Azure AI Engineer Associate</p><div class="cert-status certified">Certified — Valid until 2027</div></div>
+    <div class="cert-card reveal"><span class="cert-icon">🔐</span><h3>Azure AI Fundamentals (AI-900)</h3><p>Microsoft Azure AI Fundamentals</p><div class="cert-status certified">Certified — Jan 2026</div></div>
+    <div class="cert-card reveal"><span class="cert-icon">💻</span><h3>CompTIA Security+</h3><p>CompTIA Security+ Certification</p><div class="cert-status certified">Certified — Valid until 2028</div></div>
+    <div class="cert-card reveal"><span class="cert-icon">🌐</span><h3>LPI Linux Essentials</h3><p>LPI Linux Essentials</p><div class="cert-status certified">Certified — Permanently Valid</div></div>
+    <div class="cert-card reveal"><span class="cert-icon">☁️</span><h3>CompTIA SecAI+</h3><p>AI Security Specialist</p><div class="cert-status in-progress">In Progress — 2026</div></div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <h2>Establish Connection</h2>
+  <div class="contact-container reveal">
+    <form id="contactForm">
+      <div class="form-group"><label>Name</label><input type="text" required></div>
+      <div class="form-group"><label>Email</label><input type="email" required></div>
+      <div class="form-group"><label>Subject</label><input type="text" required></div>
+      <div class="form-group"><label>Message</label><textarea rows="6" required></textarea></div>
+      <button type="submit" class="btn-primary"><span>Send Message</span></button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2026 CYBER REAPER — ALL RIGHTS RESERVED</p>
+  <div class="social-links">
+    <a href="https://github.com/Griff-Reaper" title="GitHub">⚡</a>
+    <a href="https://www.linkedin.com/in/jace-griffith-jg11" title="LinkedIn">🔗</a>
+    <a href="https://www.credly.com/users/joyelle-griffith" title="Credly">🏆</a>
+    <a href="mailto:cybergriffith@gmail.com" title="Email">✉️</a>
+  </div>
+</footer>
+
+<script>
+// Cursor
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+(function tick(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(tick);
+})();
+document.querySelectorAll('a,button,.project-card,.cert-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ ring.style.width='44px';ring.style.height='44px';ring.style.borderColor='rgba(0,255,65,0.8)'; });
+  el.addEventListener('mouseleave',()=>{ ring.style.width='24px';ring.style.height='24px';ring.style.borderColor='rgba(0,255,65,0.5)'; });
+});
+
+// Spotlight on cards
+document.querySelectorAll('.project-card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    c.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+
+// Scroll progress
+window.addEventListener('scroll',()=>{
+  const pct=(scrollY/(document.body.scrollHeight-innerHeight))*100;
+  document.getElementById('scrollProgress').style.width=pct+'%';
+});
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{ if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); });
+},{threshold:.1});
+document.querySelectorAll('.reveal,.timeline-item,.project-card,.cert-card').forEach(el=>{ el.classList.add('reveal'); obs.observe(el); });
+
+// Typing text
+const lines=['./scan --target corporate-it --mode honeypot','[ARIA] Attacker session detected: session_a4f2...','[THREAT] Score: 72/HIGH | Techniques: social_engineering','[HONEYTOKEN] Deploying: VeltrixID temp credential...','[IOC] Pushing to Nexus-Sec...','./aria --status','[ONLINE] ARIA Honeypot v2.0 — Monitoring active'];
+let li=0,ci=0,deleting=false;
+const el=document.getElementById('typingText');
+function type(){
+  if(!deleting){
+    if(ci<=lines[li].length){ el.textContent=lines[li].slice(0,ci++); setTimeout(type,ci>lines[li].length?1800:40); }
+    else{ deleting=true; setTimeout(type,1800); }
+  } else {
+    if(ci>0){ el.textContent=lines[li].slice(0,ci--); setTimeout(type,18); }
+    else{ deleting=false; li=(li+1)%lines.length; setTimeout(type,300); }
+  }
+}
+type();
+
+// Counter animation
+function animCount(el,target,isFloat,suffix=''){
+  let start=0; const dur=2000; const step=16;
+  const inc=target/(dur/step);
+  const t=setInterval(()=>{
+    start=Math.min(start+inc,target);
+    el.textContent=(isFloat?start.toFixed(1):Math.floor(start))+suffix;
+    if(start>=target) clearInterval(t);
+  },step);
+}
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      animCount(document.getElementById('s1'),500,false,'+');
+      animCount(document.getElementById('s2'),99.8,true,'%');
+      animCount(document.getElementById('s3'),50,false,'+');
+      cObs.disconnect();
+    }
+  });
+},{threshold:.5});
+cObs.observe(document.querySelector('.stats-grid'));
+
+// Skills chart
+const ctx=document.getElementById('skillsChart').getContext('2d');
+new Chart(ctx,{
+  type:'radar',
+  data:{
+    labels:['AI/LLM Security','Automation','Cloud Security','EDR','Network Sec','Malware Analysis','SIEM','Machine Learning'],
+    datasets:[{
+      label:'Skill Level',
+      data:[94,95,90,92,88,80,85,82],
+      backgroundColor:'rgba(0,255,65,0.08)',
+      borderColor:'rgba(0,255,65,0.6)',
+      pointBackgroundColor:'#00ff41',
+      pointBorderColor:'transparent',
+      pointRadius:4,
+      borderWidth:1.5,
+    }]
+  },
+  options:{
+    responsive:true,
+    scales:{r:{
+      angleLines:{color:'rgba(0,255,65,0.08)'},
+      grid:{color:'rgba(0,255,65,0.08)'},
+      pointLabels:{color:'#8b949e',font:{size:10,family:'Share Tech Mono'}},
+      ticks:{display:false},
+      suggestedMin:0,suggestedMax:100,
+    }},
+    plugins:{legend:{display:false}},
+  }
+});
+
+// Skill bars animate on scroll
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.skill-progress').forEach(b=>{
+        b.style.width=b.dataset.width;
+      });
+      barObs.disconnect();
+    }
+  });
+},{threshold:.3});
+barObs.observe(document.querySelector('.skills-bars'));
+
+// Nav mobile
+document.getElementById('menuToggle').addEventListener('click',()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open'));
+});
+
+// Glitch trigger
+const glitch=document.querySelector('.glitch-text');
+setInterval(()=>{
+  if(Math.random()>.65){
+    glitch.style.animation='none';
+    glitch.offsetHeight;
+    glitch.style.animation='neonPulse 4s ease-in-out infinite';
+    setTimeout(()=>{ glitch.style.textShadow='2px 0 #ff0040,-2px 0 #00d4ff,0 0 20px rgba(0,255,65,0.4)'; },0);
+    setTimeout(()=>{ glitch.style.textShadow=''; },200);
+  }
+},2800);
+</script>
 </body>
 </html>
