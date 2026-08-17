@@ -25,7 +25,8 @@ try {
 </head>
 <body>
 
-<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -236,8 +237,18 @@ $ jq -r '.success' results/attack_log.jsonl \
       </details>
     </p>
   </div>
-  <canvas id="attackField" class="field__canvas" role="img"
-    aria-label="A field of 1,824 marks, one per logged attack execution. 78 bright marks are the attacks that succeeded; the remaining 1,746 are blocked."></canvas>
+  <div class="field__wrap">
+    <canvas id="attackField" class="field__canvas" role="img"
+      aria-label="A field of 1,824 marks, one per logged attack execution. 78 bright marks are the attacks that succeeded; the remaining 1,746 are blocked."></canvas>
+    <div class="field__tip" id="fieldTip" role="status" aria-live="polite"></div>
+  </div>
+  <div class="field__controls">
+    <button class="replay" id="fieldReplay" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
+      replay the run
+    </button>
+    <span>hover any mark for its technique and verdict</span>
+  </div>
 </section>
 
 <!-- ══ PROJECTS ══════════════════════════════════════════════════════════ -->
@@ -811,7 +822,6 @@ matched on (technique_id, attack_prompt):
       <dl class="rolecard__dl">
         <dt>Platform</dt><dd>GenAI.mil — DoD enterprise generative AI</dd>
         <dt>Scale</dt><dd>The platform serves 1.6M+ users; I'm one of six engineers on the support team</dd>
-        <dt>Clearance</dt><dd>Active Secret</dd>
         <dt>Work</dt><dd>Tier 1 support, onboarding, access management, LLM workflow integration — plus the automation that shrinks all four</dd>
       </dl>
     </div>
@@ -881,7 +891,7 @@ matched on (technique_id, attack_prompt):
   <div class="section__head">
     <span class="section__idx">03</span>
     <h2 class="section__title">Background</h2>
-    <span class="section__note">Active Secret clearance &middot; U.S. Navy veteran</span>
+    <span class="section__note">employment &middot; service &middot; certifications</span>
   </div>
 
   <div class="bg__grid">
@@ -913,8 +923,8 @@ matched on (technique_id, attack_prompt):
 
         <div class="tl">
           <p class="tl__when">2020 — 2024</p>
-          <p class="tl__what">Engineman, United States Navy</p>
-          <p class="tl__org">U.S. Navy · Secret clearance</p>
+          <p class="tl__what">Engineman</p>
+          <p class="tl__org">United States Navy</p>
           <p class="tl__desc">
             Diesel propulsion systems on naval vessels. Four years somewhere a maintenance
             log is a legal document taught me more about writing down what you actually
@@ -1014,6 +1024,7 @@ matched on (technique_id, attack_prompt):
   </div>
 </footer>
 
+<script src="field-data.js" defer></script>
 <script src="app.js" defer></script>
 </body>
 </html>

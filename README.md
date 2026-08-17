@@ -39,11 +39,23 @@ There is no build step, no framework, no dependencies, and no third-party reques
 of any kind — fonts included.
 
 ```text
-index.html    structure and content, including every provenance excerpt
-styles.css    design tokens, layout, light/dark themes, aurora
-app.js        progressive enhancement only — the page works fully without it
-fonts/        Bricolage Grotesque, Archivo, IBM Plex Mono — latin subset, woff2
+index.html      structure and content, including every provenance excerpt
+styles.css      design tokens, layout, light/dark themes, aurora, motion
+app.js          progressive enhancement only — the page works fully without it
+field-data.js   1,824 attack outcomes, generated from attack_log.jsonl
+fonts/          Bricolage Grotesque, Archivo, IBM Plex Mono — latin subset, woff2
 ```
+
+## The attack field
+
+The block under the hero is not an illustration. It is one mark per line of
+`results/attack_log.jsonl` — 1,824 executions in run order grouped by target,
+with the 78 the judge scored as successful lit. Hover any mark for its technique
+ID, name, severity, target and verdict; "replay the run" redraws the sweep.
+
+`field-data.js` is generated from the log: technique index, target index and
+outcome packed into four characters per attack, plus a lookup table of the 40
+techniques. 10 KB for the whole run.
 
 Type is Bricolage Grotesque for display, Archivo for text, IBM Plex Mono for data
 and identifiers. The woff2 files are committed rather than loaded from a CDN, so
