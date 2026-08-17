@@ -83,6 +83,104 @@
     }, { passive: true });
   }
 
+  /* ── node net ──────────────────────────────────────────────────────────
+   * Drifting nodes, linked to their neighbours, lit by the pointer. Runs on
+   * one canvas behind the whole page and stops when the tab is hidden.
+   */
+  (function net() {
+    var cv = document.getElementById('net');
+    if (!cv || !cv.getContext || reduce) return;
+
+    var c = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, pts = [], mx = -9999, my = -9999, running = true;
+    var LINK = 155;
+
+    function size() {
+      W = window.innerWidth; H = window.innerHeight;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var want = Math.min(96, Math.round((W * H) / 17000));
+      pts = [];
+      for (var i = 0; i < want; i++) {
+        pts.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.24,
+          vy: (Math.random() - 0.5) * 0.24,
+          r: Math.random() * 1.7 + 0.9
+        });
+      }
+    }
+
+    function rgba(v, a) {
+      var s = getComputedStyle(root).getPropertyValue(v).trim() || '#6d5cff';
+      if (s.charAt(0) !== '#') return s;
+      if (s.length === 4) s = '#' + s[1] + s[1] + s[2] + s[2] + s[3] + s[3];
+      return 'rgba(' + parseInt(s.substr(1, 2), 16) + ',' +
+                       parseInt(s.substr(3, 2), 16) + ',' +
+                       parseInt(s.substr(5, 2), 16) + ',' + a + ')';
+    }
+
+    var cool, hot, cyan;
+    function palette() {
+      cool = rgba('--cool', 1); hot = rgba('--hot', 1); cyan = rgba('--cyan', 1);
+    }
+
+    function frame() {
+      if (!running) return;
+      c.clearRect(0, 0, W, H);
+
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+        if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
+
+        for (var j = i + 1; j < pts.length; j++) {
+          var q = pts[j];
+          var dx = p.x - q.x, dy = p.y - q.y;
+          var d2 = dx * dx + dy * dy;
+          if (d2 > LINK * LINK) continue;
+          var t = 1 - Math.sqrt(d2) / LINK;
+          c.strokeStyle = (i % 3 === 0 ? cyan : cool).replace('1)', (t * 0.45).toFixed(3) + ')');
+          c.lineWidth = 1;
+          c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(q.x, q.y); c.stroke();
+        }
+
+        /* anything near the pointer lights up and reaches for it */
+        var pdx = p.x - mx, pdy = p.y - my;
+        var pd = Math.sqrt(pdx * pdx + pdy * pdy);
+        var near = pd < 190;
+        if (near) {
+          var k = 1 - pd / 190;
+          c.strokeStyle = hot.replace('1)', (k * 0.72).toFixed(3) + ')');
+          c.lineWidth = 1;
+          c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(mx, my); c.stroke();
+        }
+
+        c.fillStyle = near ? hot.replace('1)', '0.85)') : cool.replace('1)', '0.7)');
+        c.beginPath(); c.arc(p.x, p.y, p.r, 0, 6.2832); c.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    size(); palette(); frame();
+
+    var st;
+    window.addEventListener('resize', function () {
+      clearTimeout(st); st = setTimeout(size, 200);
+    });
+    window.addEventListener('pointermove', function (e) {
+      mx = e.clientX; my = e.clientY;
+    }, { passive: true });
+    window.addEventListener('pointerleave', function () { mx = my = -9999; });
+    document.addEventListener('visibilitychange', function () {
+      running = !document.hidden;
+      if (running) requestAnimationFrame(frame);
+    });
+    if (toggle) toggle.addEventListener('click', function () { setTimeout(palette, 30); });
+  })();
+
   /* ── scroll reveal ─────────────────────────────────────────────────── */
   /* Classes are added by script, never authored into the HTML, so a reader
      without JavaScript is never left staring at opacity:0. */

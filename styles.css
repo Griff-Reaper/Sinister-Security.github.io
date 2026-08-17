@@ -48,8 +48,9 @@
 
   /* ground */
   --paper:      #08090f;
-  --surface:    rgba(20, 24, 36, 0.82);
-  --surface-2:  rgba(30, 35, 50, 0.82);
+  --surface:    rgba(17, 20, 29, 0.94);
+  --surface-solid: #11141d;
+  --surface-2:  rgba(27, 32, 46, 0.94);
 
   /* ink */
   --ink:        #eef0f7;
@@ -74,9 +75,9 @@
   --cool:       #6d5cff;
   --cyan:       #22d3ee;
 
-  --aurora-1:   rgba(255, 77, 46, 0.50);
-  --aurora-2:   rgba(109, 92, 255, 0.48);
-  --aurora-3:   rgba(34, 211, 238, 0.34);
+  --aurora-1:   rgba(255, 77, 46, 0.34);
+  --aurora-2:   rgba(109, 92, 255, 0.30);
+  --aurora-3:   rgba(34, 211, 238, 0.22);
   --grain:      0.32;
 
   --glow-text:  0 0 26px rgba(255, 95, 61, 0.5);
@@ -108,6 +109,7 @@
 
   --paper:      #eef0ea;
   --surface:    rgba(252, 252, 250, 0.92);
+  --surface-solid: #f7f8f4;
   --surface-2:  rgba(226, 229, 220, 0.92);
 
   --ink:        #14181a;
@@ -139,6 +141,60 @@
 
   --shadow:     0 1px 2px rgba(20, 24, 26, 0.06);
 }
+
+/* --- RGB edge ------------------------------------------------------------- */
+/* An animated angle needs @property to interpolate; without it the border is
+   still a spectrum, it just holds still. */
+@property --a {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes hue-spin { to { --a: 360deg; } }
+
+.rgb {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(var(--surface-solid), var(--surface-solid)) padding-box,
+    conic-gradient(from var(--a),
+      var(--hot), #ff2e7e, var(--cool), var(--cyan), #39ff9e, var(--hot)) border-box;
+  animation: hue-spin 7s linear infinite;
+}
+
+/* HUD corner ticks. On a pseudo-element, not the background — .rgb owns the
+   background shorthand and would wipe these out. */
+.hud { position: relative; }
+.hud::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(var(--signal), var(--signal)),
+    linear-gradient(var(--signal), var(--signal)),
+    linear-gradient(var(--cyan), var(--cyan)),
+    linear-gradient(var(--cyan), var(--cyan));
+  background-size: 16px 2px, 2px 16px, 16px 2px, 2px 16px;
+  background-position: left top, left top, right bottom, right bottom;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 6px var(--signal));
+  opacity: 0.9;
+}
+
+/* --- node net ------------------------------------------------------------- */
+/* Drifting nodes with links between neighbours, lit by the pointer. Sits
+   above the aurora and below the grain. */
+.net {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+}
+.aurora { z-index: -3 !important; }
 
 /* --- reset ---------------------------------------------------------------- */
 
