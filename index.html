@@ -14,6 +14,14 @@
 <meta property="og:title" content="Jace Griffith — AI Security &amp; Automation Engineer">
 <meta property="og:description" content="Every figure on the page links to the artifact that produced it.">
 <meta property="og:type" content="profile">
+<script>
+/* Apply a stored theme choice before first paint, so the page never flashes
+   the wrong one. Kept inline and tiny for that reason. */
+try {
+  var t = localStorage.getItem('theme');
+  if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+} catch (e) {}
+</script>
 </head>
 <body>
 
@@ -30,6 +38,12 @@
       <a href="#background">background</a>
       <a href="#contact">contact</a>
     </nav>
+    <button class="theme" id="themeToggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 2.5a9.5 9.5 0 0 1 0 19z" fill="currentColor"/>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -190,6 +204,40 @@
     </aside>
 
   </div>
+</section>
+
+<!-- ══ ATTACK FIELD ══════════════════════════════════════════════════════ -->
+<!-- Not decoration: one mark per row of results/attack_log.jsonl. -->
+<section class="shell field" aria-labelledby="field-h">
+  <div class="field__head">
+    <div>
+      <h2 class="field__h" id="field-h">Every attack in the committed run</h2>
+      <p class="field__sub">One mark per logged execution, grouped by target.</p>
+    </div>
+    <p class="field__stat">
+      <b>1,824</b> executions &nbsp;·&nbsp; <b class="hit">78</b> got through<details class="prov">
+        <summary>attack_log.jsonl</summary>
+        <div class="prov__panel">
+          <div class="prov__head">
+            <span>red-team-simulator / results/attack_log.jsonl</span>
+            <a href="https://github.com/cyber-griffith/red-team-simulator/blob/main/results/attack_log.jsonl" target="_blank" rel="noopener">open on GitHub ↗</a>
+          </div>
+<pre class="prov__code">$ wc -l results/attack_log.jsonl
+<b>1824</b> results/attack_log.jsonl
+
+$ jq -r '.success' results/attack_log.jsonl \
+    | sort | uniq -c
+   1746 false
+     <b>78</b> true</pre>
+          <p class="prov__say">The marks above are that file, in order, one per line —
+          not an illustration of it. Bright marks are the 78 attacks the judge scored as
+          successful.</p>
+        </div>
+      </details>
+    </p>
+  </div>
+  <canvas id="attackField" class="field__canvas" role="img"
+    aria-label="A field of 1,824 marks, one per logged attack execution. 78 bright marks are the attacks that succeeded; the remaining 1,746 are blocked."></canvas>
 </section>
 
 <!-- ══ PROJECTS ══════════════════════════════════════════════════════════ -->
