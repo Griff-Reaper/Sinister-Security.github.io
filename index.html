@@ -2,711 +2,946 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Griff's Sinister Cyber Portfolio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-<style>
-:root {
-  --primary: #00ff41;
-  --primary-dim: rgba(0,255,65,0.15);
-  --bg: #0a0a0a;
-  --bg2: #0d1117;
-  --bg3: #111820;
-  --border: #1a2332;
-  --text: #c9d1d9;
-  --text2: #8b949e;
-  --orange: #f97316;
-  --red: #ff4444;
-  --blue: #58a6ff;
-}
-
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Share Tech Mono', monospace;
-  overflow-x: hidden;
-  cursor: none;
-}
-
-/* Scanline sweep */
-body::before {
-  content:'';
-  position:fixed;
-  left:0; right:0;
-  height:2px;
-  background:linear-gradient(90deg,transparent,rgba(0,255,65,0.2),transparent);
-  animation:scanline 7s linear infinite;
-  z-index:9998;
-  pointer-events:none;
-}
-
-/* Grid bg */
-body::after {
-  content:'';
-  position:fixed;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(0,255,65,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,0.025) 1px, transparent 1px);
-  background-size:50px 50px;
-  pointer-events:none;
-  z-index:0;
-}
-
-@keyframes scanline { 0%{top:-2px} 100%{top:100vh} }
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-@keyframes neonPulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
-@keyframes glitchA { 0%,89%,91%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)} 90%{clip-path:inset(20% 0 50% 0);transform:translate(-3px,0)} }
-@keyframes glitchB { 0%,89%,91%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)} 90%{clip-path:inset(50% 0 20% 0);transform:translate(3px,0)} }
-@keyframes revealUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
-@keyframes spin { to{transform:rotate(360deg)} }
-@keyframes datafall { 0%{transform:translateY(-100%);opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{transform:translateY(100vh);opacity:0} }
-@keyframes countUp { from{opacity:0} to{opacity:1} }
-@keyframes borderGlow { 0%,100%{box-shadow:0 0 8px rgba(0,255,65,0.2)} 50%{box-shadow:0 0 24px rgba(0,255,65,0.5),0 0 48px rgba(0,255,65,0.1)} }
-
-/* ── CURSOR ── */
-.cursor-dot { position:fixed; width:5px; height:5px; background:#00ff41; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); box-shadow:0 0 8px rgba(0,255,65,0.8); transition:transform .1s; }
-.cursor-ring { position:fixed; width:24px; height:24px; border:1px solid rgba(0,255,65,0.5); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:all .12s ease; }
-
-/* ── DATA STREAMS ── */
-.stream { position:fixed; top:0; font-size:9px; color:rgba(0,255,65,0.1); pointer-events:none; z-index:1; writing-mode:vertical-lr; animation:datafall linear infinite; }
-
-/* ── NAV ── */
-header { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(10,10,10,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
-nav { display:flex; align-items:center; justify-content:space-between; padding:14px 48px; max-width:1400px; margin:0 auto; }
-.logo { font-family:'Orbitron',monospace; font-size:16px; font-weight:900; color:var(--primary); letter-spacing:3px; text-shadow:0 0 12px rgba(0,255,65,0.5); animation:neonPulse 3s ease-in-out infinite; }
-.nav-links { list-style:none; display:flex; gap:32px; }
-.nav-links a { color:var(--text2); text-decoration:none; font-size:11px; letter-spacing:2px; transition:color .2s; position:relative; }
-.nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:1px; background:var(--primary); box-shadow:0 0 6px rgba(0,255,65,0.6); transition:width .3s; }
-.nav-links a:hover { color:var(--primary); }
-.nav-links a:hover::after { width:100%; }
-.menu-toggle { display:none; background:none; border:1px solid var(--border); color:var(--primary); padding:6px 10px; cursor:pointer; font-family:inherit; }
-
-/* ── HERO ── */
-.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:100px 48px 60px; position:relative; text-align:center; }
-
-.hex-label { font-size:10px; letter-spacing:4px; color:rgba(0,255,65,0.5); margin-bottom:16px; }
-.hex-label::before,.hex-label::after { content:'⬡'; margin:0 8px; color:rgba(0,255,65,0.3); }
-
-.glitch-text { font-family:'Orbitron',monospace; font-size:clamp(42px,8vw,96px); font-weight:900; color:var(--primary); letter-spacing:6px; text-shadow:0 0 20px rgba(0,255,65,0.4); position:relative; animation:neonPulse 4s ease-in-out infinite; margin-bottom:32px; }
-.glitch-text::before { content:attr(data-text); position:absolute; inset:0; color:#ff0040; animation:glitchA 4s infinite; }
-.glitch-text::after  { content:attr(data-text); position:absolute; inset:0; color:#00d4ff; animation:glitchB 4s infinite .05s; }
-
-/* Terminal */
-.terminal { background:rgba(13,17,23,0.9); border:1px solid rgba(0,255,65,0.2); border-radius:8px; padding:16px 24px; margin:0 auto 40px; min-width:360px; max-width:540px; text-align:left; animation:float 6s ease-in-out infinite; box-shadow:0 0 30px rgba(0,255,65,0.05),inset 0 0 30px rgba(0,0,0,0.5); }
-.terminal-header { display:flex; align-items:center; margin-bottom:12px; }
-.btn-circle { width:10px; height:10px; border-radius:50%; margin-right:6px; }
-.btn-circle:nth-child(1){background:#ff5f56} .btn-circle:nth-child(2){background:#ffbd2e} .btn-circle:nth-child(3){background:#27c93f}
-.terminal-prompt { color:var(--text2); font-size:11px; margin-left:8px; }
-.typing-text { color:var(--primary); font-size:13px; min-height:20px; }
-.typing-text::after { content:'█'; animation:neonPulse .7s step-end infinite; }
-
-/* Stats */
-.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:700px; margin:0 auto 32px; }
-.stat-card { background:rgba(13,17,23,0.8); border:1px solid rgba(0,255,65,0.15); border-radius:6px; padding:20px 16px; transition:transform .3s,box-shadow .3s; }
-.stat-card:hover { transform:translateY(-5px); box-shadow:0 8px 30px rgba(0,255,65,0.2); }
-.stat-number { display:block; font-family:'Orbitron',monospace; font-size:28px; font-weight:700; color:var(--primary); text-shadow:0 0 10px rgba(0,255,65,0.5); }
-.stat-label { font-size:9px; letter-spacing:1px; color:var(--text2); }
-
-.scroll-indicator { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0.35; animation:float 2.5s ease-in-out infinite; }
-.scroll-indicator span { font-size:8px; letter-spacing:4px; color:var(--primary); }
-.scroll-arrow { width:1px; height:32px; background:linear-gradient(to bottom,var(--primary),transparent); }
-
-/* ── SECTIONS ── */
-.section { padding:90px 48px; max-width:1200px; margin:0 auto; position:relative; z-index:2; }
-.section h2 { font-family:'Orbitron',monospace; font-size:clamp(22px,4vw,34px); font-weight:700; color:var(--primary); letter-spacing:4px; margin-bottom:48px; text-align:center; text-shadow:0 0 20px rgba(0,255,65,0.3); }
-
-/* ── ABOUT ── */
-.about-content { display:grid; grid-template-columns:280px 1fr; gap:56px; align-items:start; }
-.profile-img { position:relative; }
-.profile-img img { width:100%; border-radius:8px; border:1px solid rgba(0,255,65,0.2); display:block; }
-.profile-img::before { content:''; position:absolute; inset:-4px; background:conic-gradient(from 0deg,var(--primary),transparent 30%,transparent 70%,var(--primary)); border-radius:12px; animation:spin 6s linear infinite; z-index:-1; }
-.about-text p { font-family:sans-serif; font-size:14px; line-height:1.8; color:var(--text); margin-bottom:16px; }
-.highlight { color:var(--primary); }
-.skills-highlight { margin-top:24px; background:rgba(0,255,65,0.03); border:1px solid rgba(0,255,65,0.12); border-radius:6px; padding:20px; }
-.skills-highlight h3 { font-size:11px; letter-spacing:2px; color:var(--primary); margin-bottom:12px; }
-.skills-highlight ul { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-.skills-highlight li { font-size:11px; color:var(--text2); padding-left:12px; position:relative; }
-.skills-highlight li::before { content:'▸'; position:absolute; left:0; color:var(--primary); }
-
-/* ── SKILLS ── */
-.skills-container { display:grid; grid-template-columns:1fr 380px; gap:48px; align-items:center; }
-.skill-item { margin-bottom:20px; }
-.skill-name { display:flex; justify-content:space-between; font-size:11px; color:var(--text2); margin-bottom:6px; }
-.skill-bar { height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
-.skill-progress { height:100%; background:linear-gradient(90deg,#00ff41,#00cc33); border-radius:3px; width:0; transition:width 1.4s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; }
-.skill-progress::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); background-size:200%; animation:shimmer 2s linear infinite; }
-.chart-container { position:relative; }
-
-/* ── TIMELINE ── */
-.timeline { max-width:750px; margin:0 auto; position:relative; }
-.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,var(--primary),transparent); }
-.timeline-item { padding:0 0 36px 32px; position:relative; }
-.timeline-item::before { content:''; position:absolute; left:-5px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--primary); box-shadow:0 0 10px rgba(0,255,65,0.6); }
-.timeline-content { background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:6px; padding:20px 24px; transition:transform .3s,box-shadow .3s; position:relative; overflow:hidden; }
-.timeline-content::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(0,255,65,0.04),transparent); opacity:0; transition:opacity .3s; }
-.timeline-content:hover { transform:translateX(6px); box-shadow:-3px 0 20px rgba(0,255,65,0.15); }
-.timeline-content:hover::before { opacity:1; }
-.timeline-date { font-size:10px; letter-spacing:2px; color:var(--primary); margin-bottom:6px; }
-.timeline-title { font-size:15px; color:var(--text); margin-bottom:4px; }
-.timeline-content h4 { font-size:11px; color:var(--primary); margin-bottom:8px; letter-spacing:1px; }
-.timeline-content p { font-family:sans-serif; font-size:12px; color:var(--text2); line-height:1.6; }
-
-/* ── PROJECTS ── */
-.projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
-.project-card { background:rgba(13,17,23,0.9); border:1px solid var(--border); border-radius:8px; padding:24px; position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; }
-.project-card > * { position:relative; z-index:1; }
-.project-card::after { content:''; position:absolute; width:220px; height:220px; background:radial-gradient(circle,rgba(0,255,65,0.08) 0%,transparent 70%); border-radius:50%; pointer-events:none; left:var(--mx,50%); top:var(--my,50%); transform:translate(-50%,-50%); opacity:0; transition:opacity .3s; z-index:0; }
-.project-card:hover::after { opacity:1; }
-.project-card:hover { transform:translateY(-7px); box-shadow:0 12px 40px rgba(0,255,65,0.15); }
-
-/* Corner brackets */
-.corner { position:absolute; width:14px; height:14px; opacity:0.4; transition:opacity .3s; }
-.corner.tl { top:8px; left:8px; border-top:2px solid var(--primary); border-left:2px solid var(--primary); }
-.corner.tr { top:8px; right:8px; border-top:2px solid var(--primary); border-right:2px solid var(--primary); }
-.corner.bl { bottom:8px; left:8px; border-bottom:2px solid var(--primary); border-left:2px solid var(--primary); }
-.corner.br { bottom:8px; right:8px; border-bottom:2px solid var(--primary); border-right:2px solid var(--primary); }
-.project-card:hover .corner { opacity:1; }
-
-/* Featured variants */
-.project-card.aria-card { border-color:rgba(249,115,22,0.3); background:linear-gradient(135deg,rgba(249,115,22,0.04),rgba(13,17,23,0.95)); }
-.project-card.aria-card:hover { box-shadow:0 12px 40px rgba(249,115,22,0.18); }
-.project-card.aria-card .corner { border-color:rgba(249,115,22,0.7) !important; }
-.project-card.aria-card::after { background:radial-gradient(circle,rgba(249,115,22,0.1) 0%,transparent 70%); }
-
-.project-card.featured-card { border-color:rgba(0,255,65,0.3); background:linear-gradient(135deg,rgba(0,255,65,0.04),rgba(13,17,23,0.95)); animation:borderGlow 3s ease-in-out infinite; }
-
-.badge { display:inline-block; font-size:9px; letter-spacing:2px; padding:3px 8px; border-radius:2px; margin-bottom:10px; }
-.badge-orange { color:var(--orange); background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); animation:neonPulse 2s ease-in-out infinite; }
-.badge-green  { color:var(--primary); background:rgba(0,255,65,0.08); border:1px solid rgba(0,255,65,0.25); animation:neonPulse 2s ease-in-out infinite; }
-
-.project-status { display:inline-block; font-size:9px; letter-spacing:2px; padding:3px 8px; border-radius:2px; margin-bottom:12px; }
-.status-active { color:var(--primary); background:rgba(0,255,65,0.1); border:1px solid rgba(0,255,65,0.3); }
-.status-completed { color:#58a6ff; background:rgba(88,166,255,0.1); border:1px solid rgba(88,166,255,0.3); }
-
-.project-card h3 { font-size:16px; color:var(--text); margin-bottom:10px; letter-spacing:1px; }
-.project-card p { font-family:sans-serif; font-size:12px; color:var(--text2); line-height:1.7; margin-bottom:16px; }
-.project-tech { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
-.tech-tag { font-size:10px; color:var(--text2); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:3px 8px; border-radius:3px; transition:all .2s; cursor:default; }
-.tech-tag:hover { color:var(--primary); background:rgba(0,255,65,0.08); border-color:rgba(0,255,65,0.3); transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,255,65,0.1); }
-.project-links { display:flex; gap:12px; flex-wrap:wrap; }
-.project-link { color:var(--primary); font-size:11px; text-decoration:none; letter-spacing:1px; transition:text-shadow .2s; }
-.project-link:hover { text-shadow:0 0 12px rgba(0,255,65,0.8); }
-.dashboard-link { color:var(--blue); }
-
-/* ── CERTS ── */
-.certs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-.cert-card { background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; position:relative; overflow:hidden; transition:transform .3s,box-shadow .3s; }
-.cert-card::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:conic-gradient(from 0deg,transparent,rgba(0,255,65,0.06) 60deg,transparent 120deg); animation:spin 10s linear infinite; opacity:0; transition:opacity .4s; }
-.cert-card:hover::before { opacity:1; }
-.cert-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 12px 40px rgba(0,255,65,0.15); }
-.cert-icon { font-size:32px; margin-bottom:12px; display:block; }
-.cert-card h3 { font-size:12px; letter-spacing:1px; color:var(--text); margin-bottom:6px; }
-.cert-card p { font-family:sans-serif; font-size:11px; color:var(--text2); margin-bottom:12px; }
-.cert-status { font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:3px; display:inline-block; }
-.certified    { color:var(--primary); background:rgba(0,255,65,0.1); border:1px solid rgba(0,255,65,0.3); }
-.in-progress  { color:var(--orange); background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); animation:neonPulse 2s ease-in-out infinite; }
-
-/* ── CONTACT ── */
-.contact-container { max-width:600px; margin:0 auto; }
-.form-group { margin-bottom:20px; }
-.form-group label { display:block; font-size:10px; letter-spacing:2px; color:var(--primary); margin-bottom:6px; }
-.form-group input, .form-group textarea { width:100%; background:rgba(13,17,23,0.8); border:1px solid var(--border); border-radius:4px; padding:12px 16px; color:var(--text); font-family:'Share Tech Mono',monospace; font-size:12px; transition:border-color .3s,box-shadow .3s; resize:vertical; }
-.form-group input:focus, .form-group textarea:focus { outline:none; border-color:rgba(0,255,65,0.4); box-shadow:0 0 0 1px rgba(0,255,65,0.2),0 0 20px rgba(0,255,65,0.08); }
-.btn-primary { width:100%; padding:14px; background:transparent; border:1px solid var(--primary); color:var(--primary); font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:3px; cursor:pointer; border-radius:4px; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
-.btn-primary::before { content:''; position:absolute; inset:0; background:var(--primary); transform:scaleX(0); transform-origin:left; transition:transform .3s; z-index:0; }
-.btn-primary:hover { color:#000; }
-.btn-primary:hover::before { transform:scaleX(1); }
-.btn-primary span { position:relative; z-index:1; }
-
-/* ── FOOTER ── */
-footer { border-top:1px solid var(--border); padding:32px 48px; text-align:center; }
-footer p { font-size:10px; letter-spacing:2px; color:var(--text2); margin-bottom:16px; }
-.social-links { display:flex; justify-content:center; gap:12px; }
-.social-links a { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid rgba(0,255,65,0.2); border-radius:4px; text-decoration:none; font-size:16px; transition:all .3s; }
-.social-links a:hover { border-color:rgba(0,255,65,0.6); box-shadow:0 0 16px rgba(0,255,65,0.25); transform:translateY(-3px); }
-
-/* ── SCROLL REVEAL ── */
-.reveal { opacity:0; transform:translateY(24px); transition:opacity .6s ease,transform .6s ease; }
-.reveal.visible { opacity:1; transform:translateY(0); }
-
-/* ── SCROLL PROGRESS ── */
-.scroll-progress { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--primary),#00cc33); z-index:200; transition:width .1s; }
-
-@media(max-width:900px) {
-  nav { padding:12px 20px; }
-  .nav-links { display:none; flex-direction:column; position:fixed; top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.97);align-items:center;justify-content:center;gap:24px; }
-  .nav-links.open { display:flex; }
-  .menu-toggle { display:block; }
-  .about-content { grid-template-columns:1fr; }
-  .skills-container { grid-template-columns:1fr; }
-  .stats-grid { grid-template-columns:repeat(2,1fr); }
-  .hero { padding:80px 24px 60px; }
-  .section { padding:70px 24px; }
-  .chart-container { display:none; }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jace Griffith — AI Security &amp; Automation Engineer</title>
+<meta name="description" content="AI security and automation engineer. LLM injection detection, CVE retrieval, and red-team tooling — with the test sets and result files behind every figure.">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23e8e9e3'/%3E%3Cpath d='M4 24 L12 14 L18 19 L28 7' stroke='%23b83719' stroke-width='3' fill='none' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:title" content="Jace Griffith — AI Security &amp; Automation Engineer">
+<meta property="og:description" content="Every figure on the page links to the artifact that produced it.">
+<meta property="og:type" content="profile">
 </head>
 <body>
 
-<!-- Cursor -->
-<div class="cursor-dot" id="cursorDot"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- Data streams -->
-<div class="stream" style="left:2%;animation-duration:14s;animation-delay:-4s">01001010 11001100 00110101 10101001 01010110</div>
-<div class="stream" style="left:97%;animation-duration:18s;animation-delay:-9s">11001010 00110101 10101001 01011010 10001011</div>
-
-<!-- Scroll progress -->
-<div class="scroll-progress" id="scrollProgress"></div>
-
-<!-- Header -->
-<header>
-  <nav>
-    <div class="logo">CYBER_REAPER</div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#about">About Me</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#certifications">Certs</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <button class="menu-toggle" id="menuToggle">☰</button>
-  </nav>
+<header class="masthead">
+  <div class="shell masthead__bar">
+    <a class="masthead__name" href="#top">Jace Griffith <span>AI SECURITY &amp; AUTOMATION</span></a>
+    <nav class="masthead__nav" aria-label="Sections">
+      <a href="#projects">projects</a>
+      <a href="#current">current</a>
+      <a href="#background">background</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
 </header>
 
-<!-- Hero -->
-<section class="hero" id="home">
-  <div style="z-index:2;width:100%">
-   <div class="hex-label">AI SECURITY ENGINEER</div>
-    <div class="hex-label" style="font-size:9px;color:rgba(255,68,68,0.55);margin-top:-10px;margin-bottom:16px;letter-spacing:3px;">SECRET // CLEARED &nbsp;⬡&nbsp; DoD AUTHORIZED &nbsp;⬡&nbsp; GOVTECH</div>
-    <h1 class="glitch-text" data-text="CYBER REAPER">CYBER REAPER</h1>
-    <div class="terminal" style="animation:float 6s ease-in-out infinite">
-      <div class="terminal-header">
-        <div class="btn-circle"></div>
-        <div class="btn-circle"></div>
-        <div class="btn-circle"></div>
-        <span class="terminal-prompt">reaper@cyber:~$</span>
-      </div>
-      <div class="typing-text" id="typingText"></div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card"><span class="stat-number" id="s1">0</span><span class="stat-label">Vulnerabilities Found</span></div>
-      <div class="stat-card"><span class="stat-number" id="s2">0</span><span class="stat-label">Threat Detection %</span></div>
-      <div class="stat-card"><span class="stat-number" id="s3">0</span><span class="stat-label">Systems Secured</span></div>
-      <div class="stat-card"><span class="stat-number">24/7</span><span class="stat-label">Network Monitoring</span></div>
-    </div>
-  </div>
-  <div class="scroll-indicator">
-    <span>SCROLL</span>
-    <div class="scroll-arrow"></div>
-  </div>
-</section>
+<main id="main">
 
-<!-- About -->
-<section class="section" id="about">
-  <h2>System Profile</h2>
-  <div class="about-content reveal">
-    <div class="profile-img">
-      <img src="profile.jpg" alt="Jace Griffith">
-    </div>
-    <div class="about-text">
-      <p>I am an <span class="highlight">AI security engineer and GovTech specialist</span> operating at the intersection of artificial intelligence and national security. Currently supporting <span class="highlight">GenAI.mil</span> — the Department of Defense's enterprise generative AI platform — as GenAI Platform Support Engineer at Game Plan Tech (GridIron).</p>
-      <p>My work spans <span class="highlight">LLM security</span>, <span class="highlight">adversarial ML defense</span>, and <span class="highlight">AI platform operations</span> across government and enterprise environments. I build autonomous AI security tools aligned to MITRE ATT&CK/ATLAS — including AI honeypots, red team simulators, and LLM security gateways.</p>
-      <p>Navy veteran. Active Secret clearance. <span class="highlight">Committed to the GovTech mission: securing the AI systems that power national defense, one system at a time.</span></p>
-      <div class="skills-highlight">
-        <h3>Core Competencies:</h3>
-        <ul>
-          <li>DoD/GovTech AI Platform Ops</li>
-          <li>LLM Security & Prompt Defense</li>
-          <li>AI Honeypot & Deception Tech</li>
-          <li>Adversarial ML Defense</li>
-          <li>Threat Detection & Response</li>
-          <li>AI Governance & Compliance</li>
-          <li>Cloud Security & CSPM</li>
-          <li>Incident Response & Forensics</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
+<section class="shell hero" id="top">
+  <div class="hero__grid">
 
-<!-- Skills -->
-<section class="section" id="skills">
-  <h2>Technical Arsenal</h2>
-  <div class="skills-container">
-    <div class="skills-bars reveal">
-      <div class="skill-item"><div class="skill-name"><span>AI / LLM Security</span><span>94%</span></div><div class="skill-bar"><div class="skill-progress" data-width="94%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Security Automation</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" data-width="95%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Cloud Security</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" data-width="90%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Endpoint Detection (EDR)</span><span>92%</span></div><div class="skill-bar"><div class="skill-progress" data-width="92%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Network Security</span><span>88%</span></div><div class="skill-bar"><div class="skill-progress" data-width="88%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Malware Analysis</span><span>80%</span></div><div class="skill-bar"><div class="skill-progress" data-width="80%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>SIEM Management</span><span>85%</span></div><div class="skill-bar"><div class="skill-progress" data-width="85%"></div></div></div>
-      <div class="skill-item"><div class="skill-name"><span>Machine Learning</span><span>82%</span></div><div class="skill-bar"><div class="skill-progress" data-width="82%"></div></div></div>
-    </div>
-    <div class="chart-container reveal">
-      <canvas id="skillsChart"></canvas>
-    </div>
-  </div>
-</section>
+    <div>
+      <p class="hero__eyebrow">AI Security &amp; Automation Engineer</p>
+      <h1 class="hero__name">Jace&nbsp;Griffith</h1>
 
-<!-- Experience -->
-<section class="section" id="experience">
-  <h2>Battle History</h2>
-  <div class="timeline">
-    <div class="timeline-item reveal">
-      <div class="timeline-content">
-        <div class="corner tl"></div><div class="corner br"></div>
-        <div class="timeline-date">2026 — PRESENT</div>
-        <h3 class="timeline-title">GenAI Platform Support Engineer (Tier 1)</h3>
-        <h4>Game Plan Tech (GridIron)</h4>
-        <p>Supporting GenAI.mil — the Department of Defense's enterprise generative AI platform. Provide technical support for military and civilian personnel with LLM tooling, platform onboarding, access management, and AI workflow integration within a classified DoD environment requiring active Secret clearance.</p>
+      <div class="hero__lead">
+        A retrieval system I built answered <strong>142 held-out questions</strong> with
+        <strong>141 grounded</strong> in the evidence they cited.<details class="prov">
+          <summary>config_decision.json</summary>
+          <div class="prov__panel">
+            <div class="prov__head">
+              <span>security-intel-rag / experiments/results/config_decision.json</span>
+              <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/results/config_decision.json" target="_blank" rel="noopener">open on GitHub ↗</a>
+            </div>
+<pre class="prov__code">"questions":  <b>142</b>,
+"a_grounded": <b>141</b>,
+"b_grounded": 142,</pre>
+          </div>
+        </details>
+        On <strong>22%</strong> of those same 142 questions, it never retrieved the CVE the
+        question was about.<details class="prov">
+          <summary>config_decision.json</summary>
+          <div class="prov__panel">
+            <div class="prov__head">
+              <span>security-intel-rag / experiments/results/config_decision.json</span>
+              <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/results/config_decision.json" target="_blank" rel="noopener">open on GitHub ↗</a>
+            </div>
+<pre class="prov__code">"post_hoc_target_hit": {
+  "questions": <b>142</b>,
+  "a_target_retrieved": <b>111</b>,
+  "b_target_retrieved": 108,
+  "p_value": 0.6291
+}</pre>
+            <p class="prov__say">111 of 142 — the target CVE reached the context 78% of the
+            time. The remaining 22% is the failure this page does not hide.</p>
+          </div>
+        </details>
+        Both numbers come out of one file, over one set of questions, and both link to it.
       </div>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-content">
-        <div class="corner tl"></div><div class="corner br"></div>
-        <div class="timeline-date">2025 — 2026</div>
-        <h3 class="timeline-title">System Administrator</h3>
-        <h4>Southeast Pathology Association</h4>
-        <p>Primary CrowdStrike Falcon administrator across 100+ workstations and 30+ servers. Administered VMware vSphere 7, Cisco Palo Alto firewalls, Intune MDM, Sumo Logic SIEM, and Exchange Online in a HIPAA healthcare environment.</p>
-      </div>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-content">
-        <div class="corner tl"></div><div class="corner br"></div>
-        <div class="timeline-date">2024 — 2025</div>
-        <h3 class="timeline-title">Cybersecurity Specialist Student</h3>
-        <h4>MyComputerCareer</h4>
-        <p>400+ hours hands-on labs. Earned CompTIA Security+, CySA+, and LPI Linux Essentials. Studied ethical hacking, penetration testing, and AI-assisted security tooling.</p>
-      </div>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-content">
-        <div class="corner tl"></div><div class="corner br"></div>
-        <div class="timeline-date">2020 — 2024</div>
-        <h3 class="timeline-title">Engineman — US Navy</h3>
-        <h4>United States Navy</h4>
-        <p>Maintained diesel propulsion systems on naval vessels. Operated with active Secret security clearance in high-accountability environments requiring precision and analytical problem-solving.</p>
-      </div>
-    </div>
-    <div class="timeline-item reveal">
-      <div class="timeline-content">
-        <div class="corner tl"></div><div class="corner br"></div>
-        <div class="timeline-date">2019 — 2020</div>
-        <h3 class="timeline-title">Front Desk Clerk</h3>
-        <h4>Riverview Hotel</h4>
-        <p>Managed guest data confidentiality, reservation systems, and front desk operations.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Projects -->
-<section class="section" id="projects">
-  <h2>Mission Archives</h2>
-  <div class="projects-grid">
+      <p class="hero__meta">
+        <span>Active Secret clearance</span> <i>/</i>
+        <span>U.S. Navy veteran</span> <i>/</i>
+        <span>St.&nbsp;Marys, Georgia</span>
+      </p>
 
-    <div class="project-card aria-card">
-      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-      <div class="badge badge-orange">⬡ FLAGSHIP BUILD</div>
-      <div class="project-status status-active">ACTIVE</div>
-      <h3>ARIA Honeypot</h3>
-      <p>AI-powered corporate IT decoy using Claude to profile social engineering attackers in real time. Deploys fake credentials, builds behavioral dossiers, tracks MITRE ATT&CK techniques, and streams live IOCs to a SOC dashboard.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Claude API</span><span class="tech-tag">React</span><span class="tech-tag">WebSocket</span><span class="tech-tag">MITRE ATT&CK</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/aria-honeypot" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
-
-    <div class="project-card featured-card">
-      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-      <div class="badge badge-green">⬡ FEATURED</div>
-      <div class="project-status status-active">ACTIVE</div>
-      <h3>Red Team Attack Simulator</h3>
-      <p>Enterprise AI red team platform executing 40+ attack scenarios from MITRE ATLAS taxonomy. Features 5 APT personas (APT28, Lazarus, Volt Typhoon, Scattered Spider) with 15.9% bypass rate discovery and a live dashboard.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">MITRE ATLAS</span><span class="tech-tag">Azure OpenAI</span><span class="tech-tag">Claude API</span><span class="tech-tag">Multi-Agent</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/Griff-Reaper/red-team-simulator" target="_blank" class="project-link">View on GitHub →</a>
-        <a href="https://griff-reaper.github.io/red-team-simulator/" target="_blank" class="project-link dashboard-link">Live Dashboard 📊</a>
+      <div class="hero__links">
+        <a class="btn btn--primary" href="mailto:cybergriffith@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg>
+          cybergriffith@gmail.com
+        </a>
+        <a class="btn" href="https://github.com/Griff-Reaper" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7 0-.7 0-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+          github.com/Griff-Reaper
+        </a>
+        <a class="btn" href="https://www.linkedin.com/in/jace-griffith-jg11/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM2.4 9h5.2v12H2.4zM9.6 9h5v1.6h.1c.7-1.2 2.3-2 4.2-2 4.1 0 4.9 2.5 4.9 5.9V21h-5.2v-5.3c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9.6z"/></svg>
+          LinkedIn
+        </a>
       </div>
     </div>
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-active">ACTIVE</div>
-      <h3>Nexus-Sec</h3>
-      <p>Multi-agent SIEM platform with automated incident response cutting manual intervention from 30+ minutes to under 5 seconds. Ingests ARIA Honeypot IOCs for cross-platform threat correlation.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">Multi-Agent</span><span class="tech-tag">Claude Sonnet 4</span>
+    <!-- readout: establishes the provenance rule inside the first screen -->
+    <aside class="readout" aria-label="Selected measurements">
+      <div class="readout__head">
+        <span>Selected measurements</span>
+        <span>2026</span>
       </div>
-      <a href="https://github.com/Griff-Reaper/nexus-sec" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-active">ACTIVE</div>
-      <h3>Prompt Firewall</h3>
-      <p>Enterprise LLM security gateway with multi-layer threat detection achieving 95%+ accuracy and &lt;10ms latency. Classifies prompt injection, jailbreaks, and PII leakage with policy enforcement.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span><span class="tech-tag">ML</span><span class="tech-tag">NLP</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/prompt-firewall" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
+      <div class="readout__rows">
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-active">ACTIVE</div>
-      <h3>Prompt-Shield</h3>
-      <p>Stateless ML detection API achieving &lt;10ms p99 latency at 10K+ req/sec. Three-tier pipeline with parallel execution and batch processing for adversarial prompt classification.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">scikit-learn</span><span class="tech-tag">NLP</span><span class="tech-tag">Adversarial ML</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/prompt-shield" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
+        <div class="readout__row">
+          <span class="readout__val">358,170</span>
+          <div class="readout__lbl">NVD CVE records indexed, 1999–2026, ingested against verified feed hashes<details class="prov">
+              <summary>manifest.json</summary>
+              <div class="prov__panel">
+                <div class="prov__head">
+                  <span>security-intel-rag / data/manifest.json</span>
+                  <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/data/manifest.json" target="_blank" rel="noopener">open ↗</a>
+                </div>
+<pre class="prov__code">"corpus": {
+  "source": "fkie-cad/nvd-json-data-feeds",
+  "records_raw": 376092,
+  "records_indexable": <b>358170</b>,
+  "records_filtered_out": 17922,
+  "release_tag": "v2026.08.12-000016",
+  "pulled_at": "2026-08-12T19:52:47+00:00"
+}</pre>
+              </div>
+            </details>
+          </div>
+        </div>
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-completed">COMPLETED</div>
-      <h3>Cloud Security Scanner</h3>
-      <p>CSPM tool in Go scanning 5 AWS services with 14 checks mapped to CIS, PCI-DSS, SOC2, HIPAA, NIST. Identifies $30K+ annual risk reduction with compliance-ready reporting.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Go</span><span class="tech-tag">AWS SDK</span><span class="tech-tag">CIS Benchmarks</span><span class="tech-tag">REST API</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/cloud-security-scanner" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
+        <div class="readout__row">
+          <span class="readout__val">1,824</span>
+          <div class="readout__lbl">Logged attack executions across 7 targets — every verdict committed<details class="prov">
+              <summary>attack_log.jsonl</summary>
+              <div class="prov__panel">
+                <div class="prov__head">
+                  <span>red-team-simulator / results/attack_log.jsonl</span>
+                  <a href="https://github.com/Griff-Reaper/red-team-simulator/blob/main/results/attack_log.jsonl" target="_blank" rel="noopener">open ↗</a>
+                </div>
+<pre class="prov__code">$ wc -l results/attack_log.jsonl
+<b>1824</b> results/attack_log.jsonl
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-completed">COMPLETED</div>
-      <h3>Security Intel RAG</h3>
-      <p>Production RAG system over 200,000+ CVE records with ChromaDB vector search and Claude-powered threat analysis for natural language vulnerability queries.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">Claude API</span><span class="tech-tag">ChromaDB</span><span class="tech-tag">LangChain</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/security-intel-rag" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
+# one line per attack: prompt, full response,
+# and the judge verdict that scored it
+{"id": "...", "technique_id": "PI-004",
+ "target": "bedrock", "success": false,
+ "judge_verdict": {"success": false,
+   "confidence": 0.95, "reasoning": "..."}}</pre>
+              </div>
+            </details>
+          </div>
+        </div>
 
-    <div class="project-card">
-      <div class="corner tl"></div><div class="corner br"></div>
-      <div class="project-status status-completed">COMPLETED</div>
-      <h3>AI SecOps Agent</h3>
-      <p>Autonomous ReAct agent for multi-step security reasoning with MITRE ATT&CK lookups, threat intelligence queries, and automated incident response playbook generation.</p>
-      <div class="project-tech">
-        <span class="tech-tag">Python</span><span class="tech-tag">LangGraph</span><span class="tech-tag">ReAct</span><span class="tech-tag">Claude Sonnet 4</span>
-      </div>
-      <a href="https://github.com/Griff-Reaper/ai-secops-agent" target="_blank" class="project-link">View on GitHub →</a>
-    </div>
+        <div class="readout__row">
+          <span class="readout__val">12 / 12</span>
+          <div class="readout__lbl">Sabotaged answers caught by the grader, zero false alarms on controls<details class="prov">
+              <summary>&hellip;holdout_hybrid_rerank.json</summary>
+              <div class="prov__panel">
+                <div class="prov__head">
+                  <span>security-intel-rag / experiments/results/answer_quality_holdout_hybrid_rerank.json</span>
+                  <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/results/answer_quality_holdout_hybrid_rerank.json" target="_blank" rel="noopener">open ↗</a>
+                </div>
+<pre class="prov__code">"calibration_corrupted": {
+  "graded": 12,
+  "grades": { "unsupported": <b>12</b> },
+  "grounded_rate": 0.0
+},
+"calibration_verbatim": {
+  "graded": 12,
+  "grades": { "grounded": <b>12</b> },
+  "grounded_rate": 1.0
+}</pre>
+                <p class="prov__say">Deliberately corrupted answers are graded alongside
+                the real ones. The judge caught all 12, and flagged none of the 12 clean
+                controls.</p>
+              </div>
+            </details>
+          </div>
+        </div>
 
-  <div class="project-card" style="border-color:rgba(255,68,68,0.25);background:linear-gradient(135deg,rgba(255,68,68,0.03),rgba(13,17,23,0.97));cursor:default;">
-      <div class="corner tl" style="border-color:rgba(255,68,68,0.5)"></div>
-      <div class="corner br" style="border-color:rgba(255,68,68,0.5)"></div>
-      <div class="badge" style="color:#ff4444;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);margin-bottom:10px;display:inline-block;font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:2px;">⬡ IN DEVELOPMENT</div>
-      <div class="project-status" style="color:#ff4444;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);display:inline-block;font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:2px;margin-bottom:12px;">CLASSIFIED</div>
-      <h3 style="color:#ff4444;letter-spacing:4px;filter:blur(3px);user-select:none;">CORVUS MIRAGE</h3>
-      <p style="color:#3a3a3a;font-family:monospace;font-size:11px;letter-spacing:1px;line-height:1.7;">[REDACTED] — Advanced AI security platform targeting [REDACTED] threat vectors across [REDACTED] attack surfaces. Architecture details restricted pending disclosure review. Estimated operational: [REDACTED].</p>
-      <div class="project-tech" style="margin-bottom:16px;">
-        <span class="tech-tag" style="color:#2a2a2a;border-color:#1a1a1a;">[REDACTED]</span>
-        <span class="tech-tag" style="color:#2a2a2a;border-color:#1a1a1a;">[REDACTED]</span>
-        <span class="tech-tag" style="color:#2a2a2a;border-color:#1a1a1a;">[REDACTED]</span>
       </div>
-      <span style="font-size:9px;letter-spacing:2px;color:#2a2a2a;">ACCESS LEVEL: SECRET // AUTHORIZED PERSONNEL ONLY</span>
-    </div>
+
+      <p class="readout__rule">
+        <b>The rule for this page:</b> every figure links to the artifact that produced
+        it. Open any tag to read the source line.
+      </p>
+    </aside>
+
   </div>
 </section>
 
-<!-- Certs -->
-<section class="section" id="certifications">
-  <h2>Security Clearances</h2>
-  <div class="certs-grid">
-  <div class="cert-card reveal" style="border-color:rgba(0,255,65,0.4);animation:borderGlow 3s ease-in-out infinite;position:relative;">
-  <div style="position:absolute;top:10px;right:10px;font-size:8px;letter-spacing:2px;color:var(--primary);background:rgba(0,255,65,0.1);border:1px solid rgba(0,255,65,0.3);padding:2px 8px;border-radius:2px;">NEW</div>
-  <span class="cert-icon">🦾</span><h3>CompTIA SecAI+</h3><p>AI Security Specialist</p><div class="cert-status certified">Certified — Apr 2026</div>
-</div>
-<div class="cert-card reveal"><span class="cert-icon">🕵️</span><h3>AI Agent Security Specialist</h3><p>Proofpoint</p><div class="cert-status certified">Certified — Mar 2026</div></div>
-    <div class="cert-card reveal"><span class="cert-icon">🛡️</span><h3>CompTIA CySA+</h3><p>Certified Cybersecurity Analyst</p><div class="cert-status certified">Certified — Valid until 2028</div></div>
-    <div class="cert-card reveal"><span class="cert-icon">🤖</span><h3>Azure AI Engineer (AI-102)</h3><p>Azure AI Engineer Associate</p><div class="cert-status certified">Certified — Valid until 2027</div></div>
-    <div class="cert-card reveal"><span class="cert-icon">🔐</span><h3>Azure AI Fundamentals (AI-900)</h3><p>Microsoft Azure AI Fundamentals</p><div class="cert-status certified">Certified — Jan 2026</div></div>
-    <div class="cert-card reveal"><span class="cert-icon">💻</span><h3>CompTIA Security+</h3><p>CompTIA Security+ Certification</p><div class="cert-status certified">Certified — Valid until 2028</div></div>
-    <div class="cert-card reveal"><span class="cert-icon">🌐</span><h3>LPI Linux Essentials</h3><p>LPI Linux Essentials</p><div class="cert-status certified">Certified — Permanently Valid</div></div>
+<!-- ══ PROJECTS ══════════════════════════════════════════════════════════ -->
+<section class="shell section" id="projects">
+  <div class="section__head">
+    <span class="section__idx">01</span>
+    <h2 class="section__title">Selected projects</h2>
+    <span class="section__note">measured result &middot; known failure mode &middot; source</span>
+  </div>
+
+  <!-- ── 01 Prompt Shield ─────────────────────────────────────────────── -->
+  <article class="proj">
+    <div class="proj__head">
+      <span class="proj__idx">01</span>
+      <h3 class="proj__name">Prompt Shield</h3>
+      <a class="proj__repo" href="https://github.com/Griff-Reaper/prompt-shield" target="_blank" rel="noopener">Griff-Reaper/prompt-shield ↗</a>
+      <p class="proj__kind">Tiered prompt-injection detector</p>
+    </div>
+
+    <div class="proj__body">
+      <div class="proj__prose">
+        <div class="p">
+          A deterministic rule layer scores every prompt in under a millisecond and routes
+          anything uncertain to an LLM adjudicator. The design intent was cost: pay for a
+          model call only on the prompts the rules can't settle. At the band that actually
+          ships, that intent does not survive measurement — <span class="q">89.4%</span> of
+          prompts escalate, and the adjudicated path runs <span class="q">1,473 ms</span> at
+          p50 against the rule layer's 0.17 ms. The rule layer is sub-millisecond. The
+          detector is not.
+        </div>
+
+        <div class="p">
+          Measured on a held-out set of <span class="q">500</span> adversarial and
+          <span class="q">334</span> benign prompts.<details class="prov">
+            <summary>eval/*.jsonl</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>prompt-shield / eval/attacks_test.jsonl &middot; eval/benign_test.jsonl</span>
+                <a href="https://github.com/Griff-Reaper/prompt-shield/tree/main/eval" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">$ wc -l eval/attacks_test.jsonl eval/benign_test.jsonl
+ <b>500</b> eval/attacks_test.jsonl
+ <b>334</b> eval/benign_test.jsonl
+
+# attacks span 40 technique IDs, 6 categories
+# the 334 benign split <b>254</b> ordinary + <b>80</b> hard negatives
+# ordinary/*: coding 50 · knowledge 40 · writing 30
+#   casual 30 · math 25 · data 23
+#   business 20 · translation 18 · summarization 18</pre>
+            </div>
+          </details>
+          The headline is <span class="q">~62% recall at about 4% FPR</span>, stated as a
+          range on purpose. Three runs of an identical configuration measured recall
+          61.6 / 62.6 / 63.2% and FPR 3.9 / 3.9 / 3.3%. Quoting the 63.2% and the 3.3%
+          together would be reporting the single best run as though it were the result;
+          the spread is judge nondeterminism, and ±1 point is the honest tolerance.
+        </div>
+
+        <div class="p">
+          Three things worth more than the headline: zero false positives across the
+          <span class="q">254</span> ordinary prompts; precision <em>rose</em> while recall
+          nearly quadrupled, so the gain wasn't bought with false alarms; and the
+          adjudicator is escalate-only — it can raise a risk score and never lower one,
+          verified against stub judges hardwired to return "benign."
+        </div>
+
+        <dl class="proj__spec">
+          <div><dt>Stack</dt> <dd>&nbsp;Python · deterministic rule engine · LLM adjudicator · FastAPI</dd></div>
+          <div><dt>Corpus</dt> <dd>&nbsp;40 technique IDs · 6 attack categories · 80 hard negatives in the benign set</dd></div>
+        </dl>
+      </div>
+
+      <div>
+        <div class="tblwrap">
+          <table class="data">
+            <caption>Rule layer vs. full pipeline — 834 held-out prompts</caption>
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col" class="col-a">Rule layer</th>
+                <th scope="col" class="col-b">Full pipeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Recall</th>               <td class="col-a">16.2%</td>  <td class="col-b">61.6 – 63.2%</td></tr>
+              <tr><th scope="row">False-positive rate</th>  <td class="col-a">2.1%</td>   <td class="col-b">3.3 – 3.9%</td></tr>
+              <tr><th scope="row">Precision</th>            <td class="col-a">92.0%</td>  <td class="col-b">96.6%</td></tr>
+              <tr><th scope="row">Escalated to the LLM</th> <td class="col-a">—</td>      <td class="col-b">89.4%</td></tr>
+              <tr><th scope="row">Latency p50</th>          <td class="col-a">0.17 ms</td><td class="col-b">1,473 ms</td></tr>
+              <tr><th scope="row">Latency p95</th>          <td class="col-a">0.81 ms</td><td class="col-b">3,216 ms</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">
+                Recall and FPR are the full spread across three runs of an identical
+                configuration, not a best run. Remaining figures are from the reported run;
+                deep-tier figures carry ±1 point.
+                <details class="prov">
+                  <summary>README.md</summary>
+                  <div class="prov__panel">
+                    <div class="prov__head">
+                      <span>prompt-shield / README.md</span>
+                      <a href="https://github.com/Griff-Reaper/prompt-shield/blob/main/README.md" target="_blank" rel="noopener">open on GitHub ↗</a>
+                    </div>
+<pre class="prov__code">Fast path only
+  Precision 92.0%  Recall <b>16.2%</b>  FPR <b>2.1%</b>
+
+Fast path + LLM adjudication
+  Precision 96.6%  Recall <b>63.2%</b>  FPR <b>3.3%</b>
+
+Three runs, identical configuration:
+  recall <b>61.6% / 62.6% / 63.2%</b>
+  FPR    <b>3.9% / 3.9% / 3.3%</b>
+
+At band 0-65 it escalates <b>89.4%</b> of all prompts.
+p50 0.17 ms → 1473 ms   p95 0.81 ms → 3216 ms</pre>
+                    <p class="prov__say">The raw <code>--out</code> JSON is not committed.
+                    From <code>.gitignore</code>, verbatim: "Regenerated by a documented
+                    command, and they embed corpus text, so they are reproduced rather than
+                    tracked." Regenerate with
+                    <code>benchmark.py --sweep --adjudicator --band 20 65 --attacks
+                    eval/attacks_test.jsonl --benign eval/benign_test.jsonl</code>. The eval
+                    corpora <em>are</em> committed and linked above.</p>
+                  </div>
+                </details>
+              </td></tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="limit">
+          <span class="limit__lbl">Known failure mode</span>
+          <p>
+            81 of 746 adjudications abstained — every single one of them on an attack.
+            Traced to the model provider's own safety layer declining to classify attack
+            text at all. An attacker who can reliably trigger that refusal drops the
+            request back to the rule layer, where recall is 16.2%. The abstention isn't a
+            neutral outcome. It's the bypass.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ── 02 Security Intelligence RAG ─────────────────────────────────── -->
+  <article class="proj">
+    <div class="proj__head">
+      <span class="proj__idx">02</span>
+      <h3 class="proj__name">Security Intelligence RAG</h3>
+      <a class="proj__repo" href="https://github.com/Griff-Reaper/security-intel-rag" target="_blank" rel="noopener">Griff-Reaper/security-intel-rag ↗</a>
+      <p class="proj__kind">Retrieval over the full NVD corpus, with exploitation signal</p>
+    </div>
+
+    <div class="proj__body">
+      <div class="proj__prose">
+        <div class="p">
+          <span class="q">358,170</span> NVD CVE records, 1999 through 2026, ingested
+          reproducibly: verified feed hashes, resumable embedding, incremental refresh,
+          and a committed manifest recording exactly which release was pulled and what got
+          filtered out.<details class="prov">
+            <summary>manifest.json</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>security-intel-rag / data/manifest.json</span>
+                <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/data/manifest.json" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">"corpus": {
+  "records_raw": 376092,
+  "records_indexable": <b>358170</b>,
+  "records_filtered_out": 17922,
+  "filter_definitions": {
+    "rejected": "vulnStatus == 'Rejected' (CVE
+                 withdrawn by its assigner)"
+  },
+  "release_tag": "v2026.08.12-000016"
+},
+"exploitation": {
+  "kev":  { "entries": <b>1665</b>,
+            "catalog_version": "2026.08.11" },
+  "epss": { "entries": 358648,
+            "model_version": "v2026.06.15" }
+}</pre>
+            </div>
+          </details>
+          Enriched with CISA KEV and FIRST EPSS, so it answers which vulnerabilities are
+          actually being exploited rather than which ones merely score high.
+        </div>
+
+        <div class="p">
+          Retrieval was chosen by a four-configuration ablation — BM25, dense, hybrid, and
+          hybrid + cross-encoder rerank — on a pinned sample, compared with exact McNemar
+          tests instead of eyeballed averages, under a decision rule written down before
+          the run. The rule fired: hybrid + rerank and BM25 came out
+          <em>statistically equivalent</em> on answer quality, and the preregistered
+          consequence was to flip the default to BM25 on latency grounds.<details class="prov">
+            <summary>config_decision.json</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>security-intel-rag / experiments/results/config_decision.json</span>
+                <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/results/config_decision.json" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">"questions": 142,
+"observed_grade_discordance": 0.007,
+"p_value": 1.0,
+"difference_interval_95": {
+  "difference": -0.007,
+  "low": -0.0208, "high": 0.0067
+},
+"preregistered_delta": 0.1,
+"verdict": <b>"equivalence"</b>,
+"consequence": "the whole interval lies inside
+  +/-10%: the default flips to bm25 on latency
+  grounds",
+"rule": "experiments/PREREGISTRATION.md"</pre>
+              <p class="prov__say">Read <code>consequence</code> carefully: it is the rule's
+              stated consequence, not a record of what happened. What happened is in
+              <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/PREREGISTRATION.md" target="_blank" rel="noopener">PREREGISTRATION.md</a>,
+              verbatim: "The default is left unchanged and this paragraph is the record of
+              the rule not being executed as written."</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="p">
+          I declined that consequence, and wrote down why in the same document. The
+          experiment covered <em>one query shape of four</em>. On product + version
+          queries — the shape where the two configurations measurably differ — hybrid +
+          rerank wins R@1 <span class="q">0.306</span> to <span class="q">0.235</span> at
+          p&nbsp;=&nbsp;0.0125. Executing the rule would have traded a significant 7-point
+          loss on a shape the experiment never tested for 12.5% latency.<details class="prov">
+            <summary>identifier_queries_*.json</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>security-intel-rag / experiments/results/identifier_queries_{hybrid_rerank,bm25}.json · identifier_paired_tests.json</span>
+                <a href="https://github.com/Griff-Reaper/security-intel-rag/tree/master/experiments/results" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">product + version         hybrid_rerank    bm25
+  queries                          196     196
+  recall_at_1                   <b>0.3061</b>  <b>0.2347</b>
+  recall_at_10                  0.6327  0.5153
+
+exact McNemar, hybrid_rerank vs bm25, R@1:
+  product + version    a_wins 21  b_wins 7
+                       p = <b>0.0125</b>  significant
+  bare CVE ID          p = 0.0703  not significant
+  description sentence p = 0.7905  not significant</pre>
+              <p class="prov__say">A preregistered rule is only binding over what it
+              measured. Recording the override beats both silently ignoring the rule and
+              following it off a cliff.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="p">
+          A prompt defect cut unsupported claims from <span class="q">31.2%</span> to
+          <span class="q">0.7%</span> — one unsupported answer in 143 — and that 0.7% was
+          measured on held-out questions the fix had never seen, which is the only version
+          of that claim worth making.<details class="prov">
+            <summary>answer_quality_prompt_v1.json</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>security-intel-rag / experiments/results/answer_quality_prompt_v1.json</span>
+                <a href="https://github.com/Griff-Reaper/security-intel-rag/blob/master/experiments/results/answer_quality_prompt_v1.json" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">// before — answer_quality_prompt_v1.json
+"grades": { "grounded": 11, "unsupported": 5 },
+"grounded_rate":    0.6875,
+"unsupported_rate": <b>0.3125</b>
+
+// after, on held-out questions —
+// answer_quality_holdout_hybrid_rerank.json
+"answers": 143, "graded": 143,
+"grades": { "grounded": 142, "unsupported": 1 },
+"grounded_rate":    <b>0.993</b>,
+"unsupported_rate": <b>0.007</b>,
+"answers_with_an_invented_cve": <b>0</b>,
+"citation_validity": 1.0,
+"false_abstentions": <b>0</b>
+
+"held_out_from": [
+  ".../answer_quality_prompt_v2.json",
+  ".../answer_quality_prompt_v1.json"
+]</pre>
+              <p class="prov__say">The v1 run graded 16 answerable questions — treat 31.2%
+              as a small-sample starting point, not a precise baseline.</p>
+            </div>
+          </details>
+          Across those 143 answers, none cited a CVE ID that doesn't exist and none falsely
+          refused a question it could have answered. The grader itself is calibrated rather
+          than trusted: deliberately corrupted answers get graded alongside the real ones,
+          and it caught 12 of 12 while flagging none of the 12 clean controls.
+        </div>
+
+        <dl class="proj__spec">
+          <div><dt>Stack</dt> <dd>&nbsp;Python · SQLite FTS5 BM25 · dense embeddings · cross-encoder rerank</dd></div>
+          <div><dt>Method</dt> <dd>&nbsp;preregistered decision rule · exact McNemar · calibrated LLM judge</dd></div>
+        </dl>
+      </div>
+
+      <div>
+        <figure class="figure">
+          <figcaption class="figure__head">Fig. 1 — Grounded is not the same as correct</figcaption>
+          <div class="figure__body">
+            <div class="bars">
+
+              <div class="bar">
+                <div class="bar__top">
+                  <span class="bar__lbl">Answers grounded in the evidence they cited</span>
+                  <span class="bar__val" style="color:var(--steel)">99.3%</span>
+                </div>
+                <div class="bar__track">
+                  <span class="bar__fill bar__fill--full" style="width:99.3%"></span>
+                </div>
+                <p class="bar__note">141 of 142 questions</p>
+              </div>
+
+              <div class="bar">
+                <div class="bar__top">
+                  <span class="bar__lbl">Questions where the target CVE was actually retrieved</span>
+                  <span class="bar__val" style="color:var(--signal)">78.2%</span>
+                </div>
+                <div class="bar__track">
+                  <span class="bar__fill bar__fill--part" style="width:78.2%"></span>
+                  <span class="bar__gap" style="left:78.2%; right:0.7%"></span>
+                </div>
+                <p class="bar__note">111 of the same 142 questions · the hatched span is the gap</p>
+              </div>
+
+            </div>
+          </div>
+          <figcaption>
+            Both bars cover the same 142 paired questions, from
+            <code>config_decision.json</code>. Groundedness measures whether an answer is
+            faithful to the documents it was handed. It says nothing about whether those
+            were the right documents.
+          </figcaption>
+        </figure>
+
+        <div class="limit">
+          <span class="limit__lbl">Known failure mode</span>
+          <p>
+            Those two bars are the limitation. Across the same 142 questions, 99.3% of
+            answers were grounded while the target CVE was retrieved for only 78% — so the
+            system can return a faithful, correctly-cited, confidently-worded answer about
+            the wrong vulnerability. High
+            groundedness on a bad retrieval is more dangerous than a visible refusal,
+            because nothing about the output looks wrong.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ── 03 Red Team Attack Simulator ─────────────────────────────────── -->
+  <article class="proj">
+    <div class="proj__head">
+      <span class="proj__idx">03</span>
+      <h3 class="proj__name">Red Team Attack Simulator</h3>
+      <a class="proj__repo" href="https://github.com/Griff-Reaper/red-team-simulator" target="_blank" rel="noopener">Griff-Reaper/red-team-simulator ↗</a>
+      <p class="proj__kind">Multi-agent LLM red-teaming harness, run in CI</p>
+    </div>
+
+    <div class="proj__body">
+      <div class="proj__prose">
+        <div class="p">
+          It profiles a target model, generates adversarial prompts from a
+          <span class="q">40-technique</span> taxonomy, escalates over multiple turns under
+          five APT personas — APT28, APT29, Lazarus Group, Volt Typhoon, Scattered Spider —
+          and routes every result past an independent LLM judge before it's allowed to
+          count as a finding. Techniques carry OWASP LLM Top 10 (2025) and MITRE ATLAS IDs
+          on the technique record itself, so coverage is queryable rather than
+          asserted.<details class="prov">
+            <summary>attack_taxonomy.py</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>red-team-simulator / attack_taxonomy.py</span>
+                <a href="https://github.com/Griff-Reaper/red-team-simulator/blob/main/attack_taxonomy.py" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">"PI-004": AttackTechnique(
+    id="PI-004",
+    name="Indirect Prompt Injection",
+    category=AttackCategory.PROMPT_INJECTION,
+    severity=Severity.CRITICAL,
+    owasp=<b>"LLM01:2025"</b>,
+    mitre_atlas=<b>["AML.T0051", "AML.T0051.001"]</b>,
+),
+
+# <b>40</b> techniques across 6 categories.
+# NIST AI RMF is referenced for MEASURE-function
+# coverage, not as a per-technique field.</pre>
+            </div>
+          </details>
+          The whole thing runs in GitHub Actions and gates on critical findings.
+        </div>
+
+        <div class="p">
+          The committed run is <span class="q">1,824</span> attack executions across seven
+          targets. Three of those sit on the same Bedrock base model, which is what makes
+          the guardrail comparison worth anything — same model, same prompts, matched by
+          technique, so the only variable left is the guardrail.<details class="prov">
+            <summary>attack_log.jsonl</summary>
+            <div class="prov__panel">
+              <div class="prov__head">
+                <span>red-team-simulator / results/attack_log.jsonl</span>
+                <a href="https://github.com/Griff-Reaper/red-team-simulator/blob/main/results/attack_log.jsonl" target="_blank" rel="noopener">open on GitHub ↗</a>
+              </div>
+<pre class="prov__code">$ wc -l results/attack_log.jsonl
+<b>1824</b> results/attack_log.jsonl
+
+targets on the same Bedrock base model:
+  bedrock              461 executions
+  bedrock-guardrails   461 executions
+  bedrock-nemo         201 executions
+
+matched on (technique_id, attack_prompt):
+  bedrock → guardrails   n=<b>451</b>   46 → 11
+  bedrock → nemo         n=<b>201</b>   23 →  2</pre>
+              <p class="prov__say">Every row carries the prompt, the model's full response,
+              and the judge's verdict with its reasoning — so a reader can disagree with a
+              specific call instead of taking the score on faith.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="p">
+          Paired, that's <span class="q">+7.8 points</span> of block rate for Bedrock
+          Guardrails and <span class="q">+10.4 points</span> for NVIDIA NeMo Guardrails. An
+          unpaired target-level comparison gives a slightly different figure and is also
+          correct, but pairing is the stronger claim because it controls for which attacks
+          each target actually saw.
+        </div>
+
+        <dl class="proj__spec">
+          <div><dt>Stack</dt> <dd>&nbsp;Python · multi-agent orchestration · Bedrock · Azure OpenAI · GitHub Actions</dd></div>
+          <div><dt>Live</dt> <dd>&nbsp;<a href="https://griff-reaper.github.io/red-team-simulator/" target="_blank" rel="noopener">griff-reaper.github.io/red-team-simulator ↗</a></dd></div>
+        </dl>
+      </div>
+
+      <div>
+        <figure class="figure">
+          <figcaption class="figure__head">Fig. 2 — Same model, same attacks, guardrail on/off</figcaption>
+          <div class="figure__body">
+            <div class="pair">
+
+              <svg viewBox="0 0 340 150" role="img" aria-labelledby="ch1t ch1d">
+                <title id="ch1t">Bedrock Guardrails, paired comparison</title>
+                <desc id="ch1d">Attack success falls from 10.2 percent bare to 2.4 percent with Bedrock Guardrails, across 451 matched attacks.</desc>
+                <line class="ch-grid" x1="32" y1="22" x2="320" y2="22"/>
+                <line class="ch-grid" x1="32" y1="52" x2="320" y2="52"/>
+                <line class="ch-grid" x1="32" y1="82" x2="320" y2="82"/>
+                <line class="ch-axis" x1="32" y1="112" x2="320" y2="112"/>
+                <line class="ch-axis" x1="32" y1="22"  x2="32"  y2="112"/>
+                <text class="ch-tick" x="26" y="25"  text-anchor="end">12</text>
+                <text class="ch-tick" x="26" y="55"  text-anchor="end">8</text>
+                <text class="ch-tick" x="26" y="85"  text-anchor="end">4</text>
+                <text class="ch-tick" x="26" y="115" text-anchor="end">0</text>
+                <line class="ch-line" x1="105" y1="35.5" x2="250" y2="94"/>
+                <circle class="ch-dot-a" cx="105" cy="35.5" r="4"/>
+                <circle class="ch-dot-b" cx="250" cy="94"   r="4"/>
+                <text class="ch-val ch-val-a" x="97"  y="39.5" text-anchor="end">10.2%</text>
+                <text class="ch-val ch-val-b" x="258" y="98"   text-anchor="start">2.4%</text>
+                <text class="ch-foot" x="105" y="128" text-anchor="middle">bare</text>
+                <text class="ch-foot" x="250" y="128" text-anchor="middle">Bedrock Guardrails</text>
+                <text class="ch-note" x="32"  y="145" text-anchor="start">n = 451 matched · +7.8 pts blocked</text>
+              </svg>
+
+              <svg viewBox="0 0 340 150" role="img" aria-labelledby="ch2t ch2d">
+                <title id="ch2t">NVIDIA NeMo Guardrails, paired comparison</title>
+                <desc id="ch2d">Attack success falls from 11.4 percent bare to 1.0 percent with NeMo Guardrails, across 201 matched attacks.</desc>
+                <line class="ch-grid" x1="32" y1="22" x2="320" y2="22"/>
+                <line class="ch-grid" x1="32" y1="52" x2="320" y2="52"/>
+                <line class="ch-grid" x1="32" y1="82" x2="320" y2="82"/>
+                <line class="ch-axis" x1="32" y1="112" x2="320" y2="112"/>
+                <line class="ch-axis" x1="32" y1="22"  x2="32"  y2="112"/>
+                <text class="ch-tick" x="26" y="25"  text-anchor="end">12</text>
+                <text class="ch-tick" x="26" y="55"  text-anchor="end">8</text>
+                <text class="ch-tick" x="26" y="85"  text-anchor="end">4</text>
+                <text class="ch-tick" x="26" y="115" text-anchor="end">0</text>
+                <line class="ch-line" x1="105" y1="26.5" x2="250" y2="104.5"/>
+                <circle class="ch-dot-a" cx="105" cy="26.5"  r="4"/>
+                <circle class="ch-dot-b" cx="250" cy="104.5" r="4"/>
+                <text class="ch-val ch-val-a" x="97"  y="30.5" text-anchor="end">11.4%</text>
+                <text class="ch-val ch-val-b" x="258" y="108.5" text-anchor="start">1.0%</text>
+                <text class="ch-foot" x="105" y="128" text-anchor="middle">bare</text>
+                <text class="ch-foot" x="250" y="128" text-anchor="middle">NeMo Guardrails</text>
+                <text class="ch-note" x="32"  y="145" text-anchor="start">n = 201 matched · +10.4 pts blocked</text>
+              </svg>
+
+            </div>
+          </div>
+          <figcaption>
+            Attack success rate, percent. Top: 46 of 451 matched attacks succeeded bare,
+            11 with Bedrock Guardrails. Bottom: 23 of 201 succeeded bare, 2 with NeMo.
+            Recomputed from <code>results/attack_log.jsonl</code>.
+          </figcaption>
+        </figure>
+
+        <div class="limit">
+          <span class="limit__lbl">Known failure mode</span>
+          <p>
+            This is one operator's taxonomy against a small set of targets — not an
+            industry benchmark, and not a general finding about guardrail products. The
+            techniques reflect what I thought to write down, which means the coverage has
+            my blind spots in it. Read it as a reproducible harness with a published run
+            attached, then re-run it against your own targets before believing anything
+            about yours.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- ══ CURRENT WORK ══════════════════════════════════════════════════════ -->
+<section class="shell section" id="current">
+  <div class="section__head">
+    <span class="section__idx">02</span>
+    <h2 class="section__title">Current work</h2>
+    <span class="section__note">employer work &middot; no public artifacts</span>
+  </div>
+
+  <div class="work__top">
+    <div>
+      <div class="lede">
+        The projects above are the security half. The day job is the automation half:
+        supporting GenAI.mil, the Department of Defense's enterprise generative AI
+        platform, and steadily replacing the manual parts of that support with things that
+        run on their own.
+      </div>
+      <div class="lede" style="margin-top:16px">
+        Nothing in this section links to an artifact, because none of it is mine to
+        publish. It's marked that way on purpose rather than quietly mixed in with the
+        figures above.<details class="prov prov--internal">
+          <summary>internal</summary>
+          <div class="prov__panel">
+            <div class="prov__head">
+              <span>provenance state: internal — not publicly verifiable</span>
+            </div>
+            <p class="prov__say">Employer work on a government platform. The code,
+            dashboards, and ticket volumes live inside systems I can't link to, so figures
+            here are stated as reported internally and carry no artifact link. The
+            distinction is the point: everything in section 01 can be checked by a
+            stranger, and nothing in section 02 can. Presenting both the same way would
+            undermine the first.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="rolecard">
+      <p class="rolecard__role">GenAI Platform Support Engineer</p>
+      <p class="rolecard__org">Game Plan Tech (GridIron) · 2026 – present</p>
+      <dl class="rolecard__dl">
+        <dt>Platform</dt><dd>GenAI.mil — DoD enterprise generative AI</dd>
+        <dt>Scale</dt><dd>The platform serves 1.6M+ users; I'm one of six engineers on the support team</dd>
+        <dt>Clearance</dt><dd>Active Secret</dd>
+        <dt>Work</dt><dd>Tier 1 support, onboarding, access management, LLM workflow integration — plus the automation that shrinks all four</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="buildgrid">
+    <div class="build">
+      <span class="build__tag">Agent</span>
+      <h3 class="build__title">Tier 0 support agent</h3>
+      <p>
+        Takes the repetitive front of the queue — the questions that have one correct
+        answer and don't need a person to find it — so engineers see the tickets that
+        actually need judgment.
+      </p>
+    </div>
+
+    <div class="build">
+      <span class="build__tag">Pipeline</span>
+      <h3 class="build__title">Cron triage pipeline</h3>
+      <p>
+        A Python job that classifies and routes incoming issues on a schedule. Triage was
+        the step where queue time went to die; moving it off the humans moved the backlog.
+      </p>
+    </div>
+
+    <div class="build">
+      <span class="build__tag">Roadmap</span>
+      <h3 class="build__title">45-item automation backlog</h3>
+      <p>
+        Every manual step in the support workflow, written down and ranked by how often it
+        costs someone an hour. A boring artifact that makes the next six months of work
+        obvious.
+      </p>
+    </div>
+
+    <div class="build">
+      <span class="build__tag">Reporting</span>
+      <h3 class="build__title">GitLab REST API dashboards</h3>
+      <p>
+        Pulls issue, milestone, and throughput data straight from the API, instead of
+        someone exporting spreadsheets by hand every Friday.
+      </p>
+    </div>
+
+    <div class="build">
+      <span class="build__tag">Analytics</span>
+      <h3 class="build__title">32-chart Insights board</h3>
+      <p>
+        The standing view of support health — volume, categories, resolution time —
+        assembled once, so leadership stops asking for it one question at a time.
+      </p>
+    </div>
+
+    <div class="build">
+      <span class="build__tag">Front end</span>
+      <h3 class="build__title">React / Vite tracker on Vercel</h3>
+      <p>
+        A tracker the team actually opens, plus a Looker Studio pipeline feeding the
+        recurring reporting. Automation nobody uses isn't automation.
+      </p>
+    </div>
   </div>
 </section>
 
-<!-- Contact -->
-<section class="section" id="contact">
-  <h2>Establish Connection</h2>
-  <div class="contact-container reveal">
-    <form id="contactForm">
-      <div class="form-group"><label>Name</label><input type="text" required></div>
-      <div class="form-group"><label>Email</label><input type="email" required></div>
-      <div class="form-group"><label>Subject</label><input type="text" required></div>
-      <div class="form-group"><label>Message</label><textarea rows="6" required></textarea></div>
-      <button type="submit" class="btn-primary"><span>Send Message</span></button>
-    </form>
+<!-- ══ BACKGROUND ════════════════════════════════════════════════════════ -->
+<section class="shell section" id="background">
+  <div class="section__head">
+    <span class="section__idx">03</span>
+    <h2 class="section__title">Background</h2>
+    <span class="section__note">Active Secret clearance &middot; U.S. Navy veteran</span>
+  </div>
+
+  <div class="bg__grid">
+    <figure class="portrait">
+      <img src="profile.jpg" alt="Jace Griffith" width="400" height="400">
+      <figcaption>Jace Griffith<br>St. Marys, GA</figcaption>
+    </figure>
+
+    <div>
+      <div class="timeline">
+        <div class="tl">
+          <p class="tl__when">2026 — present</p>
+          <p class="tl__what">GenAI Platform Support Engineer</p>
+          <p class="tl__org">Game Plan Tech (GridIron)</p>
+          <p class="tl__desc">GenAI.mil platform support and support automation. Detailed in section 02.</p>
+        </div>
+
+        <div class="tl">
+          <p class="tl__when">2025 — 2026</p>
+          <p class="tl__what">System Administrator</p>
+          <p class="tl__org">PathGroup</p>
+          <p class="tl__desc">
+            Primary CrowdStrike Falcon administrator across 100+ workstations and 30+
+            servers in a HIPAA environment. VMware vSphere, Palo Alto firewalls, Intune
+            MDM, Sumo Logic SIEM, Exchange Online — and the PowerShell that held the
+            recurring work together.
+          </p>
+        </div>
+
+        <div class="tl">
+          <p class="tl__when">2020 — 2024</p>
+          <p class="tl__what">Engineman, United States Navy</p>
+          <p class="tl__org">U.S. Navy · Secret clearance</p>
+          <p class="tl__desc">
+            Diesel propulsion systems on naval vessels. Four years somewhere a maintenance
+            log is a legal document taught me more about writing down what you actually
+            measured than any course since.
+          </p>
+        </div>
+
+        <div class="tl">
+          <p class="tl__when">In progress</p>
+          <p class="tl__what">B.S. Computer Science, AI concentration</p>
+          <p class="tl__org">Full Sail University</p>
+          <p class="tl__desc">Coursework alongside full-time work.</p>
+        </div>
+      </div>
+
+      <div class="certs">
+        <div class="cert">
+          <p class="cert__name">CompTIA SecAI+</p>
+          <p class="cert__meta">AI security · Apr 2026</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">AI Agent Security Specialist</p>
+          <p class="cert__meta">Proofpoint · Mar 2026</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">Azure AI Engineer — AI-102</p>
+          <p class="cert__meta">Microsoft · valid to 2027</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">CompTIA CySA+</p>
+          <p class="cert__meta">valid to 2028</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">CompTIA Security+</p>
+          <p class="cert__meta">valid to 2028</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">Azure AI Fundamentals — AI-900</p>
+          <p class="cert__meta">Microsoft · Jan 2026</p>
+        </div>
+        <div class="cert">
+          <p class="cert__name">LPI Linux Essentials</p>
+          <p class="cert__meta">no expiry</p>
+        </div>
+        <div class="cert cert--wip">
+          <p class="cert__name">Verify any of these</p>
+          <p class="cert__meta"><a href="https://www.credly.com/users/joyelle-griffith" target="_blank" rel="noopener">credly.com ↗</a></p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Footer -->
-<footer>
-  <p>&copy; 2026 CYBER REAPER — ALL RIGHTS RESERVED</p>
-  <div class="social-links">
-    <a href="https://github.com/Griff-Reaper" title="GitHub">⚡</a>
-    <a href="https://www.linkedin.com/in/jace-griffith-jg11" title="LinkedIn">🔗</a>
-    <a href="https://www.credly.com/users/joyelle-griffith" title="Credly">🏆</a>
-    <a href="mailto:cybergriffith@gmail.com" title="Email">✉️</a>
+<!-- ══ CONTACT ═══════════════════════════════════════════════════════════ -->
+<section class="shell section" id="contact">
+  <div class="section__head">
+    <span class="section__idx">04</span>
+    <h2 class="section__title">Contact</h2>
+    <span class="section__note">open to AI security &amp; automation roles</span>
+  </div>
+
+  <div class="contact__grid">
+    <p class="lede">
+      Email is the fastest route and it reaches me directly. There's no contact form on
+      this page on purpose — on a static site a form either quietly fails or hands your
+      message to a third party, and neither is worth the two seconds it saves you.
+    </p>
+
+    <div class="channels">
+      <a class="channel" href="mailto:cybergriffith@gmail.com">
+        <span class="channel__k">Email</span>
+        <span class="channel__v">cybergriffith@gmail.com</span>
+      </a>
+      <a class="channel" href="https://github.com/Griff-Reaper" target="_blank" rel="noopener">
+        <span class="channel__k">GitHub</span>
+        <span class="channel__v">github.com/Griff-Reaper</span>
+      </a>
+      <a class="channel" href="https://www.linkedin.com/in/jace-griffith-jg11/" target="_blank" rel="noopener">
+        <span class="channel__k">LinkedIn</span>
+        <span class="channel__v">in/jace-griffith-jg11</span>
+      </a>
+      <a class="channel" href="https://www.credly.com/users/joyelle-griffith" target="_blank" rel="noopener">
+        <span class="channel__k">Credly</span>
+        <span class="channel__v">credly.com/users/joyelle-griffith</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon">
+  <div class="shell colophon__in">
+    <span>© 2026 Jace Griffith</span>
+    <span>Every figure links to the artifact that produced it.</span>
+    <span>Hand-written HTML &amp; CSS · no framework · no tracking</span>
   </div>
 </footer>
 
-<script>
-// Cursor
-const dot = document.getElementById('cursorDot');
-const ring = document.getElementById('cursorRing');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX; my=e.clientY;
-  dot.style.left=mx+'px'; dot.style.top=my+'px';
-});
-(function tick(){
-  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(tick);
-})();
-document.querySelectorAll('a,button,.project-card,.cert-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{ ring.style.width='44px';ring.style.height='44px';ring.style.borderColor='rgba(0,255,65,0.8)'; });
-  el.addEventListener('mouseleave',()=>{ ring.style.width='24px';ring.style.height='24px';ring.style.borderColor='rgba(0,255,65,0.5)'; });
-});
-
-// Spotlight on cards
-document.querySelectorAll('.project-card').forEach(c=>{
-  c.addEventListener('mousemove',e=>{
-    const r=c.getBoundingClientRect();
-    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
-    c.style.setProperty('--my',(e.clientY-r.top)+'px');
-  });
-});
-
-// Scroll progress
-window.addEventListener('scroll',()=>{
-  const pct=(scrollY/(document.body.scrollHeight-innerHeight))*100;
-  document.getElementById('scrollProgress').style.width=pct+'%';
-});
-
-// Scroll reveal
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach((e,i)=>{ if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); });
-},{threshold:.1});
-document.querySelectorAll('.reveal,.timeline-item,.project-card,.cert-card').forEach(el=>{ el.classList.add('reveal'); obs.observe(el); });
-
-// Typing text
-const lines=['./connect --env genai.mil --clearance SECRET','[AUTH] DoD clearance verified. Platform access granted.','[PLATFORM] GenAI.mil — all systems nominal','./scan --target llm-endpoint --mode adversarial','[ARIA] Attacker session detected: session_a4f2...','[THREAT] Score: 72/HIGH | Techniques: social_engineering','[HONEYTOKEN] Deploying: VeltrixID temp credential...','[ONLINE] ARIA Honeypot v2.0 — Monitoring active'];
-let li=0,ci=0,deleting=false;
-const el=document.getElementById('typingText');
-function type(){
-  if(!deleting){
-    if(ci<=lines[li].length){ el.textContent=lines[li].slice(0,ci++); setTimeout(type,ci>lines[li].length?1800:40); }
-    else{ deleting=true; setTimeout(type,1800); }
-  } else {
-    if(ci>0){ el.textContent=lines[li].slice(0,ci--); setTimeout(type,18); }
-    else{ deleting=false; li=(li+1)%lines.length; setTimeout(type,300); }
-  }
-}
-type();
-
-// Counter animation
-function animCount(el,target,isFloat,suffix=''){
-  let start=0; const dur=2000; const step=16;
-  const inc=target/(dur/step);
-  const t=setInterval(()=>{
-    start=Math.min(start+inc,target);
-    el.textContent=(isFloat?start.toFixed(1):Math.floor(start))+suffix;
-    if(start>=target) clearInterval(t);
-  },step);
-}
-const cObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      animCount(document.getElementById('s1'),500,false,'+');
-      animCount(document.getElementById('s2'),99.8,true,'%');
-      animCount(document.getElementById('s3'),50,false,'+');
-      cObs.disconnect();
-    }
-  });
-},{threshold:.5});
-cObs.observe(document.querySelector('.stats-grid'));
-
-// Skills chart
-const ctx=document.getElementById('skillsChart').getContext('2d');
-new Chart(ctx,{
-  type:'radar',
-  data:{
-    labels:['AI/LLM Security','Automation','Cloud Security','EDR','Network Sec','Malware Analysis','SIEM','Machine Learning'],
-    datasets:[{
-      label:'Skill Level',
-      data:[94,95,90,92,88,80,85,82],
-      backgroundColor:'rgba(0,255,65,0.08)',
-      borderColor:'rgba(0,255,65,0.6)',
-      pointBackgroundColor:'#00ff41',
-      pointBorderColor:'transparent',
-      pointRadius:4,
-      borderWidth:1.5,
-    }]
-  },
-  options:{
-    responsive:true,
-    scales:{r:{
-      angleLines:{color:'rgba(0,255,65,0.08)'},
-      grid:{color:'rgba(0,255,65,0.08)'},
-      pointLabels:{color:'#8b949e',font:{size:10,family:'Share Tech Mono'}},
-      ticks:{display:false},
-      suggestedMin:0,suggestedMax:100,
-    }},
-    plugins:{legend:{display:false}},
-  }
-});
-
-// Skill bars animate on scroll
-const barObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      document.querySelectorAll('.skill-progress').forEach(b=>{
-        b.style.width=b.dataset.width;
-      });
-      barObs.disconnect();
-    }
-  });
-},{threshold:.3});
-barObs.observe(document.querySelector('.skills-bars'));
-
-// Nav mobile
-document.getElementById('menuToggle').addEventListener('click',()=>{
-  document.getElementById('navLinks').classList.toggle('open');
-});
-document.querySelectorAll('.nav-links a').forEach(a=>{
-  a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open'));
-});
-
-// Glitch trigger
-const glitch=document.querySelector('.glitch-text');
-setInterval(()=>{
-  if(Math.random()>.65){
-    glitch.style.animation='none';
-    glitch.offsetHeight;
-    glitch.style.animation='neonPulse 4s ease-in-out infinite';
-    setTimeout(()=>{ glitch.style.textShadow='2px 0 #ff0040,-2px 0 #00d4ff,0 0 20px rgba(0,255,65,0.4)'; },0);
-    setTimeout(()=>{ glitch.style.textShadow=''; },200);
-  }
-},2800);
-</script>
+<script src="app.js" defer></script>
 </body>
 </html>
