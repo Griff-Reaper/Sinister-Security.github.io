@@ -59,12 +59,27 @@
   /* ── aurora parallax ───────────────────────────────────────────────── */
 
   var aurora = document.querySelector('.aurora');
-  if (aurora && !reduce && window.matchMedia('(pointer: fine)').matches) {
+  var chips = document.querySelectorAll('.chip[data-depth]');
+  var fine = window.matchMedia('(pointer: fine)').matches;
+
+  if (!reduce && fine && (aurora || chips.length)) {
     window.addEventListener('pointermove', function (e) {
       var dx = (e.clientX / window.innerWidth - 0.5) * 2;
       var dy = (e.clientY / window.innerHeight - 0.5) * 2;
-      aurora.style.setProperty('--ax', (dx * 26).toFixed(1) + 'px');
-      aurora.style.setProperty('--ay', (dy * 20).toFixed(1) + 'px');
+
+      if (aurora) {
+        aurora.style.setProperty('--ax', (dx * 26).toFixed(1) + 'px');
+        aurora.style.setProperty('--ay', (dy * 20).toFixed(1) + 'px');
+      }
+
+      /* Each chip drifts at its own depth, so the stage reads as layered
+         rather than flat. Parallax rides the `translate` property while the
+         bob animation keeps `transform`, so the two never fight. */
+      Array.prototype.forEach.call(chips, function (chip) {
+        var d = parseFloat(chip.getAttribute('data-depth')) || 1;
+        chip.style.setProperty('--tx', (dx * d * 9).toFixed(1) + 'px');
+        chip.style.setProperty('--ty', (dy * d * 7).toFixed(1) + 'px');
+      });
     }, { passive: true });
   }
 

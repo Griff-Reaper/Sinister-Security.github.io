@@ -40,45 +40,51 @@
 
 /* --- tokens --------------------------------------------------------------- */
 
+/* Dark is the default. This design is lit — it is built out of glow against a
+   night ground, and the light theme is the alternate, not the origin. */
+
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
   /* ground */
-  --paper:      #eaebe5;
-  --surface:    rgba(250, 250, 247, 0.90);
-  --surface-2:  rgba(222, 225, 216, 0.90);
+  --paper:      #08090f;
+  --surface:    rgba(20, 24, 36, 0.82);
+  --surface-2:  rgba(30, 35, 50, 0.82);
 
   /* ink */
-  --ink:        #14181a;
-  --ink-2:      #4a5055;
-  --ink-3:      #767d83;
+  --ink:        #eef0f7;
+  --ink-2:      #aab2c6;
+  --ink-3:      #7b849c;
 
   /* structure */
-  --rule:       #c5c8bc;
-  --rule-soft:  #d5d8cd;
+  --rule:       #2b3145;
+  --rule-soft:  #1e2333;
 
   /* signal — measured values, provenance, chart primary */
-  --signal:     #b8341a;
-  --signal-ink: #93290f;
-  --signal-bg:  rgba(184, 52, 26, 0.08);
+  --signal:     #ff5f3d;
+  --signal-ink: #ff845f;
+  --signal-bg:  rgba(255, 95, 61, 0.14);
 
   /* comparison series */
-  --steel:      #1f4e79;
-  --steel-bg:   rgba(31, 78, 121, 0.08);
+  --steel:      #4d8cff;
+  --steel-bg:   rgba(77, 140, 255, 0.16);
 
-  /* aurora — the ambient light behind the page. Kept faint on paper: enough
-     to tint the ground, not enough to turn it pastel or cost any contrast. */
-  --aurora-1:   rgba(206, 68, 34, 0.18);
-  --aurora-2:   rgba(98, 74, 214, 0.15);
-  --aurora-3:   rgba(26, 168, 176, 0.13);
-  --grain:      0.20;
+  /* the two lights everything is rim-lit by */
+  --hot:        #ff4d2e;
+  --cool:       #6d5cff;
+  --cyan:       #22d3ee;
 
-  /* emission — glow is a dark-theme affordance; light gets soft depth instead */
-  --glow-text:  none;
-  --glow-panel: 0 16px 44px -30px rgba(20, 24, 26, 0.5);
-  --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --aurora-1:   rgba(255, 77, 46, 0.50);
+  --aurora-2:   rgba(109, 92, 255, 0.48);
+  --aurora-3:   rgba(34, 211, 238, 0.34);
+  --grain:      0.32;
 
-  --shadow:     0 1px 2px rgba(20, 24, 26, 0.06);
+  --glow-text:  0 0 26px rgba(255, 95, 61, 0.5);
+  --glow-panel: 0 30px 70px -34px rgba(109, 92, 255, 0.7),
+                0 12px 44px -30px rgba(255, 77, 46, 0.5);
+  --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --shadow:     0 2px 14px rgba(0, 0, 0, 0.5);
 
   /* type */
   --display: "Bricolage Grotesque", "Archivo", "Segoe UI", Helvetica, Arial, sans-serif;
@@ -97,75 +103,41 @@
    the toggle wins in both directions and a force-dark browser cannot leave the
    reader stuck on a machine-inverted version of the light theme. */
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
+:root[data-theme="light"] {
+  color-scheme: light;
 
-  --paper:      #0e1017;
-  --surface:    rgba(23, 27, 38, 0.86);
-  --surface-2:  rgba(32, 37, 51, 0.86);
+  --paper:      #eef0ea;
+  --surface:    rgba(252, 252, 250, 0.92);
+  --surface-2:  rgba(226, 229, 220, 0.92);
 
-  --ink:        #e9ebf2;
-  --ink-2:      #a7aec1;
-  --ink-3:      #7a8299;
+  --ink:        #14181a;
+  --ink-2:      #4a5055;
+  --ink-3:      #767d83;
 
-  --rule:       #2f3547;
-  --rule-soft:  #242939;
+  --rule:       #c5c8bc;
+  --rule-soft:  #d5d8cd;
 
-  --signal:     #ff6f4d;
-  --signal-ink: #ff8b6d;
-  --signal-bg:  rgba(255, 111, 77, 0.13);
+  --signal:     #c23a15;
+  --signal-ink: #93290f;
+  --signal-bg:  rgba(194, 58, 21, 0.09);
 
-  --steel:      #6ea8ff;
-  --steel-bg:   rgba(110, 168, 255, 0.15);
+  --steel:      #1f4e79;
+  --steel-bg:   rgba(31, 78, 121, 0.09);
 
-  --aurora-1:   rgba(255, 92, 56, 0.44);
-  --aurora-2:   rgba(124, 92, 255, 0.42);
-  --aurora-3:   rgba(32, 214, 214, 0.30);
-  --grain:      0.30;
+  --hot:        #d8431f;
+  --cool:       #5a46d6;
+  --cyan:       #0f9fb5;
 
-  --glow-text:  0 0 24px rgba(255, 111, 77, 0.45);
-  --glow-panel: 0 24px 64px -34px rgba(124, 92, 255, 0.6),
-                0 10px 40px -28px rgba(255, 111, 77, 0.42);
-  --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  --aurora-1:   rgba(206, 68, 34, 0.20);
+  --aurora-2:   rgba(98, 74, 214, 0.17);
+  --aurora-3:   rgba(26, 168, 176, 0.14);
+  --grain:      0.18;
 
-  --shadow:     0 2px 12px rgba(0, 0, 0, 0.45);
-}
+  --glow-text:  none;
+  --glow-panel: 0 18px 46px -30px rgba(20, 24, 26, 0.5);
+  --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-
-    /* a night ground with a blue cast, so the aurora reads as light */
-    --paper:      #0e1017;
-    --surface:    rgba(23, 27, 38, 0.86);
-    --surface-2:  rgba(32, 37, 51, 0.86);
-
-    --ink:        #e9ebf2;
-    --ink-2:      #a7aec1;
-    --ink-3:      #7a8299;
-
-    --rule:       #2f3547;
-    --rule-soft:  #242939;
-
-    --signal:     #ff6f4d;
-    --signal-ink: #ff8b6d;
-    --signal-bg:  rgba(255, 111, 77, 0.13);
-
-    --steel:      #6ea8ff;
-    --steel-bg:   rgba(110, 168, 255, 0.15);
-
-    --aurora-1:   rgba(255, 92, 56, 0.44);
-    --aurora-2:   rgba(124, 92, 255, 0.42);
-    --aurora-3:   rgba(32, 214, 214, 0.30);
-    --grain:      0.30;
-
-    --glow-text:  0 0 24px rgba(255, 111, 77, 0.45);
-    --glow-panel: 0 24px 64px -34px rgba(124, 92, 255, 0.6),
-                  0 10px 40px -28px rgba(255, 111, 77, 0.42);
-    --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.055);
-
-    --shadow:     0 2px 12px rgba(0, 0, 0, 0.45);
-  }
+  --shadow:     0 1px 2px rgba(20, 24, 26, 0.06);
 }
 
 /* --- reset ---------------------------------------------------------------- */
@@ -488,30 +460,194 @@ body::before {
 
 /* --- hero ----------------------------------------------------------------- */
 
-.hero { padding-block: clamp(40px, 6vw, 72px) clamp(26px, 3.5vw, 44px); }
-
-.hero__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 64px);
-  align-items: start;
+.hero {
+  position: relative;
+  padding-block: clamp(34px, 5vw, 62px) clamp(30px, 4vw, 54px);
+  text-align: center;
 }
 
 .hero__eyebrow {
-  font: 400 12px/1 var(--mono);
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font: 400 11.5px/1 var(--mono);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 18px;
+  color: var(--ink-2);
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  margin-bottom: clamp(18px, 2.5vw, 26px);
 }
+.hero__eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 12px 1px var(--signal);
+  animation: blip 2.4s ease-in-out infinite;
+}
+@keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
+/* the headline is the loudest thing on the page, on purpose */
 .hero__name {
   font-family: var(--display);
-  font-size: clamp(40px, 7.6vw, 72px);
-  font-weight: 700;
+  font-size: clamp(52px, 13vw, 154px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.86;
+  margin-bottom: clamp(16px, 2vw, 24px);
+  background-image: linear-gradient(101deg,
+    var(--ink) 4%, var(--hot) 44%, var(--cool) 76%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.06em;
+}
+
+.hero__line {
+  font-size: clamp(17px, 2.1vw, 23px);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 30ch;
+  margin: 0 auto clamp(18px, 2.4vw, 26px);
+  text-wrap: balance;
+}
+.hero__line b { color: var(--ink); font-weight: 600; }
+
+/* --- hero stage ----------------------------------------------------------- */
+
+/* the wrapper exists for the mobile grid; on desktop the chips position
+   against the stage itself */
+.stage__chips { display: contents; }
+
+.stage {
+  position: relative;
+  margin-top: clamp(24px, 4vw, 48px);
+  min-height: clamp(300px, 42vw, 460px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage__halo {
+  position: absolute;
+  left: 50%; top: 48%;
+  translate: -50% -50%;
+  width: clamp(330px, 50vw, 660px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--hot) 40%, transparent) 0%,
+    color-mix(in srgb, var(--cool) 32%, transparent) 42%,
+    transparent 68%);
+  animation: halo 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes halo {
+  from { transform: scale(0.92); opacity: 0.75; }
+  to   { transform: scale(1.1);  opacity: 1; }
+}
+
+.avatar-wrap { position: relative; z-index: 2; }
+
+/* a slow spectrum ring, rim-lighting the portrait from behind */
+.avatar__ring {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    var(--hot), #ff2e7e, var(--cool), var(--cyan), var(--hot));
+  filter: blur(17px);
+  opacity: 0.75;
+  animation: spin 14s linear infinite;
+}
+@keyframes spin { to { rotate: 360deg; } }
+
+.avatar {
+  position: relative;
+  width: clamp(190px, 25vw, 292px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate;
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+.avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  filter: grayscale(1) contrast(1.2) brightness(0.94);
+}
+/* duotone: colour from the gradient, luminance from the photograph */
+.avatar__duo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(126deg,
+    var(--hot) 0%, #ff2e7e 34%, var(--cool) 70%, var(--cyan) 100%);
+  mix-blend-mode: color;
+}
+:root[data-theme="light"] .avatar img { filter: grayscale(1) contrast(1.1); }
+
+/* --- floating data chips -------------------------------------------------- */
+
+.chip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  text-decoration: none;
+  padding: 11px 15px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--glow-panel), var(--glow-edge);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  translate: var(--tx, 0px) var(--ty, 0px);
+  transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1),
+              border-color 0.2s, box-shadow 0.2s;
+  animation: bob 7.5s ease-in-out infinite alternate;
+}
+.chip__v {
+  font: 700 clamp(16px, 1.8vw, 21px)/1 var(--mono);
   letter-spacing: -0.035em;
-  line-height: 0.95;
-  margin-bottom: 26px;
+  color: var(--signal);
+  text-shadow: var(--glow-text);
+}
+.chip__k { font: 400 10.5px/1.35 var(--mono); color: var(--ink-3); }
+.chip:hover {
+  border-color: var(--signal);
+  box-shadow: 0 0 38px -8px var(--signal), var(--glow-edge);
+}
+@keyframes bob {
+  from { transform: translateY(-7px); }
+  to   { transform: translateY(7px); }
+}
+
+.chip--1 { top: 2%;  left: 1%;  animation-delay: -0.6s; }
+.chip--2 { top: 14%; right: 1%; animation-delay: -2.9s; }
+.chip--3 { bottom: 12%; left: 5%;  animation-delay: -4.4s; }
+.chip--4 { bottom: 2%;  right: 6%; animation-delay: -1.7s; }
+
+@media (max-width: 860px) {
+  .stage { flex-direction: column; gap: 22px; min-height: 0; }
+  .chip {
+    position: static;
+    animation: none;
+    translate: none;
+  }
+  .stage__chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+  }
 }
 
 /* The opening measurement. This paragraph is the argument of the page. */
@@ -529,19 +665,24 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 8px 14px;
   font: 400 13px/1.5 var(--mono);
   color: var(--ink-2);
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-  margin-bottom: 26px;
+  margin-bottom: 22px;
 }
 .hero__meta i {
   font-style: normal;
-  color: var(--rule);
+  color: var(--signal);
+  opacity: 0.6;
 }
 
-.hero__links { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
 
 .btn {
   display: inline-flex;
@@ -570,7 +711,18 @@ body::before {
 }
 .btn svg { width: 15px; height: 15px; fill: currentColor; flex: none; }
 
-/* --- readout panel (hero right) ------------------------------------------- */
+/* --- proof band ----------------------------------------------------------- */
+
+.proof { padding-block: clamp(26px, 3.5vw, 48px) clamp(40px, 5.5vw, 72px); }
+
+.proof__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+/* --- readout panel -------------------------------------------------------- */
 
 .readout {
   border: 1px solid var(--rule);
@@ -1225,7 +1377,7 @@ table.data tfoot td {
 /* --- responsive ----------------------------------------------------------- */
 
 @media (max-width: 940px) {
-  .hero__grid,
+  .proof__grid,
   .proj__body,
   .work__top,
   .contact__grid { grid-template-columns: minmax(0, 1fr); }
@@ -1238,7 +1390,9 @@ table.data tfoot td {
 @media (max-width: 720px) {
   body { font-size: 15.5px; }
   .masthead__bar { flex-wrap: wrap; gap: 8px 18px; }
-  .masthead__nav { font-size: 12px; width: 100%; justify-content: space-between; gap: 10px; }
+  /* name and toggle share the first row; the nav takes the second */
+  .masthead__nav { font-size: 12px; width: 100%; justify-content: space-between; gap: 10px; order: 3; }
+  .theme { order: 2; }
   .masthead__name span { display: none; }
 
   .section__head { flex-wrap: wrap; }

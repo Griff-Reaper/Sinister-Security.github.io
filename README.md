@@ -57,6 +57,10 @@ ID, name, severity, target and verdict; "replay the run" redraws the sweep.
 outcome packed into four characters per attack, plus a lookup table of the 40
 techniques. 10 KB for the whole run.
 
+Dark is the default theme — the design is built out of glow against a night
+ground, and light is the alternate. The toggle in the masthead writes an explicit
+choice to `localStorage`, applied before first paint.
+
 Type is Bricolage Grotesque for display, Archivo for text, IBM Plex Mono for data
 and identifiers. The woff2 files are committed rather than loaded from a CDN, so
 the page makes no request to any host but its own.
