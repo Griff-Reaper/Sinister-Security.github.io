@@ -6,40 +6,86 @@
    only for measured values and the provenance system that backs them.
    ========================================================================== */
 
+/* --- type ----------------------------------------------------------------- */
+/* Self-hosted so the page makes no third-party request. Latin subset only. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("fonts/bricolage-grotesque-400-800.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo-400-700.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("fonts/ibm-plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("fonts/ibm-plex-mono-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* --- tokens --------------------------------------------------------------- */
 
 :root {
+  color-scheme: light;
+
   /* ground */
-  --paper:      #e8e9e3;
-  --surface:    #f5f5f1;
-  --surface-2:  #dedfd8;
-  --grid:       rgba(20, 24, 26, 0.045);
+  --paper:      #eaebe5;
+  --surface:    rgba(250, 250, 247, 0.90);
+  --surface-2:  rgba(222, 225, 216, 0.90);
 
   /* ink */
   --ink:        #14181a;
-  --ink-2:      #4c5257;
-  --ink-3:      #787f85;
+  --ink-2:      #4a5055;
+  --ink-3:      #767d83;
 
   /* structure */
-  --rule:       #c8cabf;
-  --rule-soft:  #d7d9cf;
+  --rule:       #c5c8bc;
+  --rule-soft:  #d5d8cd;
 
   /* signal — measured values, provenance, chart primary */
-  --signal:     #b83719;
+  --signal:     #b8341a;
   --signal-ink: #93290f;
-  --signal-bg:  rgba(184, 55, 25, 0.075);
+  --signal-bg:  rgba(184, 52, 26, 0.08);
 
   /* comparison series */
   --steel:      #1f4e79;
   --steel-bg:   rgba(31, 78, 121, 0.08);
 
+  /* aurora — the ambient light behind the page. Kept faint on paper: enough
+     to tint the ground, not enough to turn it pastel or cost any contrast. */
+  --aurora-1:   rgba(206, 68, 34, 0.13);
+  --aurora-2:   rgba(98, 74, 214, 0.10);
+  --aurora-3:   rgba(26, 168, 176, 0.09);
+  --grain:      0.20;
+
+  /* emission — glow is a dark-theme affordance; light gets soft depth instead */
+  --glow-text:  none;
+  --glow-panel: 0 16px 44px -30px rgba(20, 24, 26, 0.5);
+  --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
   --shadow:     0 1px 2px rgba(20, 24, 26, 0.06);
 
   /* type */
-  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text",
-          "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono",
-          "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --display: "Bricolage Grotesque", "Archivo", "Segoe UI", Helvetica, Arial, sans-serif;
+  --sans:    "Archivo", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+             "Helvetica Neue", Arial, sans-serif;
+  --mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Cascadia Mono",
+             "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --measure: 68ch;
   --gutter: clamp(20px, 5vw, 56px);
@@ -48,26 +94,38 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper:      #191d20;
-    --surface:    #21262a;
-    --surface-2:  #2b3136;
-    --grid:       rgba(232, 233, 230, 0.04);
+    color-scheme: dark;
 
-    --ink:        #e9eae6;
-    --ink-2:      #aab1b6;
-    --ink-3:      #7d858b;
+    /* a night ground with a blue cast, so the aurora reads as light */
+    --paper:      #0e1017;
+    --surface:    rgba(23, 27, 38, 0.86);
+    --surface-2:  rgba(32, 37, 51, 0.86);
 
-    --rule:       #363d43;
-    --rule-soft:  #2c3237;
+    --ink:        #e9ebf2;
+    --ink-2:      #a7aec1;
+    --ink-3:      #7a8299;
 
-    --signal:     #ff7554;
-    --signal-ink: #ff8f74;
-    --signal-bg:  rgba(255, 117, 84, 0.11);
+    --rule:       #2f3547;
+    --rule-soft:  #242939;
 
-    --steel:      #7fb2e5;
-    --steel-bg:   rgba(127, 178, 229, 0.12);
+    --signal:     #ff6f4d;
+    --signal-ink: #ff8b6d;
+    --signal-bg:  rgba(255, 111, 77, 0.13);
 
-    --shadow:     0 1px 2px rgba(0, 0, 0, 0.4);
+    --steel:      #6ea8ff;
+    --steel-bg:   rgba(110, 168, 255, 0.15);
+
+    --aurora-1:   rgba(255, 92, 56, 0.34);
+    --aurora-2:   rgba(124, 92, 255, 0.32);
+    --aurora-3:   rgba(32, 214, 214, 0.22);
+    --grain:      0.30;
+
+    --glow-text:  0 0 24px rgba(255, 111, 77, 0.42);
+    --glow-panel: 0 24px 64px -34px rgba(124, 92, 255, 0.6),
+                  0 10px 40px -28px rgba(255, 111, 77, 0.42);
+    --glow-edge:  inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
+    --shadow:     0 2px 12px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -84,21 +142,84 @@ html {
 
 body {
   background-color: var(--paper);
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 28px 28px;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
-  font-feature-settings: "kern" 1, "liga" 1, "cv05" 1;
+  font-feature-settings: "kern" 1, "liga" 1;
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-img { max-width: 100%; display: block; }
+/* height:auto is load-bearing — the intrinsic width/height attributes on the
+   portrait would otherwise hold its height while max-width shrank its width. */
+img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
+
+/* --- aurora --------------------------------------------------------------- */
+/* Three very soft radial fields drifting behind everything. Built from
+   gradients rather than blurred elements — a blur filter this large is
+   expensive to composite, and a wide gradient falloff is already soft. */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.aurora span:nth-child(1) {
+  top: -26vmax; left: -16vmax;
+  width: 74vmax; height: 74vmax;
+  background: radial-gradient(circle at 50% 50%, var(--aurora-1), transparent 63%);
+  animation: aurora-a 34s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(2) {
+  top: -14vmax; right: -22vmax;
+  width: 68vmax; height: 68vmax;
+  background: radial-gradient(circle at 50% 50%, var(--aurora-2), transparent 63%);
+  animation: aurora-b 43s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(3) {
+  top: 30vmax; left: 18vmax;
+  width: 60vmax; height: 60vmax;
+  background: radial-gradient(circle at 50% 50%, var(--aurora-3), transparent 64%);
+  animation: aurora-c 38s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(9vmax, 6vmax, 0) scale(1.18); }
+}
+@keyframes aurora-b {
+  from { transform: translate3d(0, 0, 0) scale(1.14); }
+  to   { transform: translate3d(-10vmax, 7vmax, 0) scale(1); }
+}
+@keyframes aurora-c {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(7vmax, -8vmax, 0) scale(1.22); }
+}
+
+/* Fine grain over the whole ground. Replaces the graph-paper grid: it gives
+   the surface texture without drawing a single straight line. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
 
 /* --- accessibility -------------------------------------------------------- */
 
@@ -214,7 +335,12 @@ a { color: inherit; }
   gap: 16px;
   margin-bottom: 40px;
   padding-bottom: 14px;
-  border-bottom: 2px solid var(--ink);
+  /* rule that ignites at the section index and cools across the page */
+  background-image: linear-gradient(90deg,
+    var(--signal) 0%, var(--ink) 16%, var(--rule) 100%);
+  background-size: 100% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
 }
 
 .section__idx {
@@ -222,13 +348,15 @@ a { color: inherit; }
   color: var(--signal);
   letter-spacing: 0.1em;
   flex: none;
+  text-shadow: var(--glow-text);
 }
 
 .section__title {
-  font-size: clamp(19px, 2.6vw, 25px);
-  font-weight: 640;
-  letter-spacing: -0.018em;
-  line-height: 1.15;
+  font-family: var(--display);
+  font-size: clamp(20px, 2.7vw, 27px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
 }
 
 .section__note {
@@ -265,10 +393,11 @@ a { color: inherit; }
 }
 
 .hero__name {
-  font-size: clamp(38px, 7.2vw, 66px);
-  font-weight: 660;
+  font-family: var(--display);
+  font-size: clamp(40px, 7.6vw, 72px);
+  font-weight: 700;
   letter-spacing: -0.035em;
-  line-height: 0.98;
+  line-height: 0.95;
   margin-bottom: 26px;
 }
 
@@ -320,7 +449,12 @@ a { color: inherit; }
   color: var(--paper);
   border-color: var(--ink);
 }
-.btn--primary:hover { background: var(--signal); border-color: var(--signal); color: #fff; }
+.btn--primary:hover {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+  box-shadow: 0 0 32px -6px var(--signal);
+}
 .btn svg { width: 15px; height: 15px; fill: currentColor; flex: none; }
 
 /* --- readout panel (hero right) ------------------------------------------- */
@@ -328,9 +462,11 @@ a { color: inherit; }
 .readout {
   border: 1px solid var(--rule);
   background: var(--surface);
-  border-radius: 3px;
-  box-shadow: var(--shadow);
+  border-radius: 4px;
+  box-shadow: var(--glow-panel), var(--glow-edge);
   overflow: hidden;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .readout__head {
@@ -359,6 +495,7 @@ a { color: inherit; }
   color: var(--signal);
   font-variant-numeric: tabular-nums;
   margin-bottom: 5px;
+  text-shadow: var(--glow-text);
 }
 .readout__lbl {
   display: block;
@@ -540,10 +677,11 @@ code {
 }
 
 .proj__name {
-  font-size: clamp(24px, 3.4vw, 33px);
-  font-weight: 650;
-  letter-spacing: -0.028em;
-  line-height: 1.1;
+  font-family: var(--display);
+  font-size: clamp(25px, 3.5vw, 35px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
 }
 
 .proj__repo {
@@ -596,9 +734,9 @@ code {
 .tblwrap {
   overflow-x: auto;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow: var(--glow-panel), var(--glow-edge);
 }
 
 table.data {
@@ -664,9 +802,9 @@ table.data tfoot td {
 
 .figure {
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow: var(--glow-panel), var(--glow-edge);
   overflow: hidden;
 }
 .figure__head {
@@ -757,8 +895,9 @@ table.data tfoot td {
   border: 1px solid var(--rule);
   border-left: 3px solid var(--ink);
   background: var(--surface);
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 16px 18px;
+  box-shadow: var(--glow-panel), var(--glow-edge);
 }
 .limit__lbl {
   display: block;
@@ -783,9 +922,9 @@ table.data tfoot td {
 .rolecard {
   border: 1px solid var(--rule);
   background: var(--surface);
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 20px 22px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glow-panel), var(--glow-edge);
 }
 .rolecard__role { font-size: 17px; font-weight: 620; letter-spacing: -0.015em; }
 .rolecard__org {
@@ -844,19 +983,26 @@ table.data tfoot td {
 
 .bg__grid {
   display: grid;
-  grid-template-columns: 168px minmax(0, 1fr);
+  grid-template-columns: 208px minmax(0, 1fr);
   gap: clamp(24px, 4vw, 46px);
   align-items: start;
 }
 
 .portrait {
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--surface);
   padding: 6px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glow-panel), var(--glow-edge);
 }
-.portrait img { border-radius: 1px; }
+/* square regardless of what the source file happens to be */
+.portrait img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: 50% 22%;
+  border-radius: 2px;
+}
 .portrait figcaption {
   font: 400 10.5px/1.5 var(--mono);
   color: var(--ink-3);

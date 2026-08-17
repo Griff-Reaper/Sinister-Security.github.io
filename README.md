@@ -35,13 +35,24 @@ the linked ones.
 
 ## Build
 
-There is no build. Three files, no framework, no dependencies, no tracking.
+There is no build step, no framework, no dependencies, and no third-party requests
+of any kind — fonts included.
 
 ```text
 index.html    structure and content, including every provenance excerpt
-styles.css    design tokens, layout, light/dark themes
+styles.css    design tokens, layout, light/dark themes, aurora
 app.js        progressive enhancement only — the page works fully without it
+fonts/        Bricolage Grotesque, Archivo, IBM Plex Mono — latin subset, woff2
 ```
+
+Type is Bricolage Grotesque for display, Archivo for text, IBM Plex Mono for data
+and identifiers. The woff2 files are committed rather than loaded from a CDN, so
+the page makes no request to any host but its own.
+
+The background is three soft radial fields drifting behind the content, built from
+gradients rather than blurred elements — a blur filter at that size is expensive to
+composite, and a wide gradient falloff is already soft. It stops entirely under
+`prefers-reduced-motion`.
 
 Run it locally with any static server:
 
@@ -58,7 +69,7 @@ one-drawer-at-a-time behaviour, Escape-to-close, and nav highlighting.
 - Responsive to 360px with no horizontal scrolling; wide content scrolls inside its
   own container
 - Visible keyboard focus on every interactive element, plus a skip link
-- `prefers-reduced-motion` respected
+- `prefers-reduced-motion` respected — the aurora holds still
 - `prefers-color-scheme` light and dark, both with real contrast ratios
 - Charts are hand-authored inline SVG with `<title>`/`<desc>`; every figure's numbers
   also appear as text in its caption
