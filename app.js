@@ -56,21 +56,15 @@
     onScroll();
   }
 
-  /* ── aurora parallax ───────────────────────────────────────────────── */
+  /* ── chip parallax ─────────────────────────────────────────────────── */
 
-  var aurora = document.querySelector('.aurora');
   var chips = document.querySelectorAll('.chip[data-depth]');
   var fine = window.matchMedia('(pointer: fine)').matches;
 
-  if (!reduce && fine && (aurora || chips.length)) {
+  if (!reduce && fine && chips.length) {
     window.addEventListener('pointermove', function (e) {
       var dx = (e.clientX / window.innerWidth - 0.5) * 2;
       var dy = (e.clientY / window.innerHeight - 0.5) * 2;
-
-      if (aurora) {
-        aurora.style.setProperty('--ax', (dx * 26).toFixed(1) + 'px');
-        aurora.style.setProperty('--ay', (dy * 20).toFixed(1) + 'px');
-      }
 
       /* Each chip drifts at its own depth, so the stage reads as layered
          rather than flat. Parallax rides the `translate` property while the
@@ -83,102 +77,200 @@
     }, { passive: true });
   }
 
-  /* ── node net ──────────────────────────────────────────────────────────
-   * Drifting nodes, linked to their neighbours, lit by the pointer. Runs on
-   * one canvas behind the whole page and stops when the tab is hidden.
+  /* -- neural net --------------------------------------------------------
+   * Layered neurons, fully connected forward, drifting continuously. Pulses
+   * travel each weight and deposit activation on arrival, so the cascade is
+   * emergent rather than scheduled. Drawn additively -- overlapping light
+   * accumulates, which is what makes neon read as neon.
    */
-  (function net() {
+  (function neural() {
     var cv = document.getElementById('net');
     if (!cv || !cv.getContext || reduce) return;
 
     var c = cv.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0, pts = [], mx = -9999, my = -9999, running = true;
-    var LINK = 155;
+    var W = 0, H = 0, layers = [], neurons = [], pulses = [], running = true;
+    var last = 0, idleT = 2000, mx = -9999, my = -9999, ox = 0, oy = 0, tox = 0, toy = 0;
+    var IDLE_GAP = 2100, MAX_PULSES = 380, REACH = 150;
 
-    function size() {
+    /* one neon hue per layer; the whole set rotates slowly */
+    var HUES = [186, 268, 312, 22, 145];
+
+    function hsla(h, s, l, a) {
+      return 'hsla(' + (((h % 360) + 360) % 360).toFixed(0) + ',' + s + '%,' + l + '%,' + a.toFixed(3) + ')';
+    }
+
+    function build() {
       W = window.innerWidth; H = window.innerHeight;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var want = Math.min(96, Math.round((W * H) / 17000));
-      pts = [];
-      for (var i = 0; i < want; i++) {
-        pts.push({
-          x: Math.random() * W, y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.24,
-          vy: (Math.random() - 0.5) * 0.24,
-          r: Math.random() * 1.7 + 0.9
+
+      var counts = W < 720 ? [4, 7, 7, 4]
+                 : W < 1150 ? [5, 9, 9, 6, 4]
+                 : [6, 11, 11, 8, 5];
+      var padX = W * 0.05, span = W - padX * 2;
+
+      layers = counts.map(function (n, k) {
+        var x = padX + span * (k / (counts.length - 1));
+        var col = [];
+        for (var i = 0; i < n; i++) {
+          col.push({
+            k: k,
+            hx: x, hy: H * 0.08 + H * 0.84 * ((i + 0.5) / n),
+            x: x, y: 0,
+            a: 0, cool: 0, out: [],
+            r: 2 + Math.random() * 1.6,
+            /* every neuron drifts on its own two frequencies */
+            f1: 0.00016 + Math.random() * 0.00026,
+            f2: 0.00013 + Math.random() * 0.00022,
+            ax: 18 + Math.random() * 30,
+            ay: 26 + Math.random() * 38,
+            p1: Math.random() * 6.283, p2: Math.random() * 6.283
+          });
+        }
+        return col;
+      });
+
+      neurons = [];
+      layers.forEach(function (col, k) {
+        col.forEach(function (n) {
+          neurons.push(n);
+          if (k + 1 >= layers.length) return;
+          layers[k + 1].forEach(function (m) {
+            n.out.push({ a: n, b: m, w: 0.22 + Math.random() * 0.78 });
+          });
+        });
+      });
+      pulses = [];
+    }
+
+    function fire(n, strength) {
+      if (n.cool > 0 || strength < 0.16) return;
+      n.cool = 230;
+      n.a = Math.max(n.a, strength);
+      if (!n.out.length) return;
+      var take = Math.min(n.out.length, 4);
+      for (var i = 0; i < take && pulses.length < MAX_PULSES; i++) {
+        var e = n.out[(Math.random() * n.out.length) | 0];
+        pulses.push({
+          e: e, t: 0, k: n.k,
+          sp: 0.0015 + Math.random() * 0.0012,
+          s: strength * (0.55 + e.w * 0.45)
         });
       }
     }
 
-    function rgba(v, a) {
-      var s = getComputedStyle(root).getPropertyValue(v).trim() || '#6d5cff';
-      if (s.charAt(0) !== '#') return s;
-      if (s.length === 4) s = '#' + s[1] + s[1] + s[2] + s[2] + s[3] + s[3];
-      return 'rgba(' + parseInt(s.substr(1, 2), 16) + ',' +
-                       parseInt(s.substr(3, 2), 16) + ',' +
-                       parseInt(s.substr(5, 2), 16) + ',' + a + ')';
-    }
-
-    var cool, hot, cyan;
-    function palette() {
-      cool = rgba('--cool', 1); hot = rgba('--hot', 1); cyan = rgba('--cyan', 1);
-    }
-
-    function frame() {
-      if (!running) return;
-      c.clearRect(0, 0, W, H);
-
-      for (var i = 0; i < pts.length; i++) {
-        var p = pts[i];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
-        if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
-
-        for (var j = i + 1; j < pts.length; j++) {
-          var q = pts[j];
-          var dx = p.x - q.x, dy = p.y - q.y;
-          var d2 = dx * dx + dy * dy;
-          if (d2 > LINK * LINK) continue;
-          var t = 1 - Math.sqrt(d2) / LINK;
-          c.strokeStyle = (i % 3 === 0 ? cyan : cool).replace('1)', (t * 0.45).toFixed(3) + ')');
-          c.lineWidth = 1;
-          c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(q.x, q.y); c.stroke();
-        }
-
-        /* anything near the pointer lights up and reaches for it */
-        var pdx = p.x - mx, pdy = p.y - my;
-        var pd = Math.sqrt(pdx * pdx + pdy * pdy);
-        var near = pd < 190;
-        if (near) {
-          var k = 1 - pd / 190;
-          c.strokeStyle = hot.replace('1)', (k * 0.72).toFixed(3) + ')');
-          c.lineWidth = 1;
-          c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(mx, my); c.stroke();
-        }
-
-        c.fillStyle = near ? hot.replace('1)', '0.85)') : cool.replace('1)', '0.7)');
-        c.beginPath(); c.arc(p.x, p.y, p.r, 0, 6.2832); c.fill();
+    function stimulate(x, y, radius, power) {
+      for (var i = 0; i < neurons.length; i++) {
+        var n = neurons[i];
+        var dx = n.x + ox - x, dy = n.y + oy - y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < radius) fire(n, power * (1 - d / radius));
       }
+    }
+
+    function frame(ts) {
+      if (!running) return;
+      var dt = last ? Math.min(64, ts - last) : 16;
+      last = ts;
+      var shift = ts * 0.006;           /* ~60s round trip through the spectrum */
+
+      if (mx > -9000) { tox = (mx / W - 0.5) * -20; toy = (my / H - 0.5) * -16; }
+      ox += (tox - ox) * 0.05; oy += (toy - oy) * 0.05;
+
+      idleT += dt;
+      if (idleT > IDLE_GAP) {
+        idleT = 0;
+        layers[0].forEach(function (n) { fire(n, 0.85 + Math.random() * 0.15); });
+      }
+
+      /* drift: every neuron orbits its anchor on its own two frequencies */
+      for (var d0 = 0; d0 < neurons.length; d0++) {
+        var nd = neurons[d0];
+        nd.x = nd.hx + Math.sin(ts * nd.f1 + nd.p1) * nd.ax;
+        nd.y = nd.hy + Math.cos(ts * nd.f2 + nd.p2) * nd.ay;
+      }
+
+      c.clearRect(0, 0, W, H);
+      c.save();
+      c.translate(ox, oy);
+      c.globalCompositeOperation = 'lighter';
+
+      for (var k = 0; k < layers.length - 1; k++) {
+        var hue = HUES[k % HUES.length] + shift;
+        for (var i = 0; i < layers[k].length; i++) {
+          var n = layers[k][i];
+          var live = n.a > 0.05;
+          for (var j = 0; j < n.out.length; j++) {
+            var e = n.out[j];
+            c.strokeStyle = live
+              ? hsla(hue, 100, 66, Math.min(0.6, n.a * 0.55 * e.w))
+              : hsla(hue, 92, 58, 0.055 + e.w * 0.075);
+            c.lineWidth = live ? 1.4 : 0.9;
+            c.beginPath(); c.moveTo(e.a.x, e.a.y); c.lineTo(e.b.x, e.b.y); c.stroke();
+          }
+        }
+      }
+
+      for (var p = pulses.length - 1; p >= 0; p--) {
+        var q = pulses[p];
+        q.t += q.sp * dt;
+        if (q.t >= 1) { fire(q.e.b, q.s * 0.82); pulses.splice(p, 1); continue; }
+        var px = q.e.a.x + (q.e.b.x - q.e.a.x) * q.t;
+        var py = q.e.a.y + (q.e.b.y - q.e.a.y) * q.t;
+        var ph = HUES[q.k % HUES.length] + shift;
+        c.shadowColor = hsla(ph, 100, 62, 1); c.shadowBlur = 16 * q.s;
+        c.fillStyle = hsla(ph, 100, 74, Math.min(1, 0.55 + q.s * 0.45));
+        c.beginPath(); c.arc(px, py, 1.6 + q.s * 1.9, 0, 6.2832); c.fill();
+        c.shadowBlur = 0;
+      }
+
+      for (var m = 0; m < neurons.length; m++) {
+        var nn = neurons[m];
+        if (nn.cool > 0) nn.cool -= dt;
+        var nh = HUES[nn.k % HUES.length] + shift;
+        var breathe = 0.14 * Math.sin(ts / 1300 + nn.p1);
+        if (nn.a > 0.02) {
+          c.shadowColor = hsla(nh, 100, 62, 1); c.shadowBlur = 22 * nn.a;
+          c.fillStyle = hsla(nh, 100, 76, 0.55 + 0.45 * nn.a);
+        } else {
+          c.shadowColor = hsla(nh, 100, 60, 1); c.shadowBlur = 7;
+          c.fillStyle = hsla(nh, 95, 62, 0.42 + breathe);
+        }
+        c.beginPath();
+        c.arc(nn.x, nn.y, nn.r + nn.a * 2.8 + breathe, 0, 6.2832);
+        c.fill();
+        nn.a *= 0.955;
+      }
+
+      c.shadowBlur = 0;
+      c.restore();
+      c.globalCompositeOperation = 'source-over';
       requestAnimationFrame(frame);
     }
 
-    size(); palette(); frame();
+    build(); requestAnimationFrame(frame);
 
     var st;
     window.addEventListener('resize', function () {
-      clearTimeout(st); st = setTimeout(size, 200);
+      clearTimeout(st); st = setTimeout(build, 200);
     });
-    window.addEventListener('pointermove', function (e) {
-      mx = e.clientX; my = e.clientY;
-    }, { passive: true });
-    window.addEventListener('pointerleave', function () { mx = my = -9999; });
+
+    if (window.matchMedia('(pointer: fine)').matches) {
+      window.addEventListener('pointermove', function (e) {
+        mx = e.clientX; my = e.clientY;
+        stimulate(mx, my, REACH, 0.9);
+      }, { passive: true });
+      window.addEventListener('pointerleave', function () { mx = my = -9999; });
+      window.addEventListener('pointerdown', function (e) {
+        stimulate(e.clientX, e.clientY, 340, 1);
+      }, { passive: true });
+    }
+
     document.addEventListener('visibilitychange', function () {
       running = !document.hidden;
-      if (running) requestAnimationFrame(frame);
+      if (running) { last = 0; requestAnimationFrame(frame); }
     });
-    if (toggle) toggle.addEventListener('click', function () { setTimeout(palette, 30); });
   })();
 
   /* ── scroll reveal ─────────────────────────────────────────────────── */
