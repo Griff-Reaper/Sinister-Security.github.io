@@ -186,7 +186,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 1;
+  opacity: 0.8;
 }
 
 /* --- reset ---------------------------------------------------------------- */
@@ -227,6 +227,22 @@ body::before {
   pointer-events: none;
   opacity: var(--grain);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+/* Scrim between the net and the content. The network stays vivid out in the
+   margins, where there is nothing to read, and drops back to near-ground
+   under the column of text. Nothing legible ever sits on a moving line. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--paper) 88%, transparent) 13%,
+    color-mix(in srgb, var(--paper) 88%, transparent) 87%,
+    transparent 100%);
 }
 
 /* --- accessibility -------------------------------------------------------- */
