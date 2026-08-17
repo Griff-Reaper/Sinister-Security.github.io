@@ -3,7 +3,7 @@
 Source for my portfolio site. AI security and automation engineer; active Secret
 clearance; U.S. Navy veteran.
 
-**Live:** [griff-reaper.github.io/Sinister-Security.github.io](https://griff-reaper.github.io/Sinister-Security.github.io/)
+**Live:** [cyber-griffith.github.io](https://cyber-griffith.github.io/)
 
 ---
 
@@ -29,9 +29,9 @@ the linked ones.
 
 | Project | Repo | Headline artifact |
 | --- | --- | --- |
-| Prompt Shield | [prompt-shield](https://github.com/Griff-Reaper/prompt-shield) | `eval/attacks_test.jsonl`, `eval/benign_test.jsonl` |
-| Security Intelligence RAG | [security-intel-rag](https://github.com/Griff-Reaper/security-intel-rag) | `data/manifest.json`, `experiments/results/` |
-| Red Team Attack Simulator | [red-team-simulator](https://github.com/Griff-Reaper/red-team-simulator) | `results/attack_log.jsonl` |
+| Prompt Shield | [prompt-shield](https://github.com/cyber-griffith/prompt-shield) | `eval/attacks_test.jsonl`, `eval/benign_test.jsonl` |
+| Security Intelligence RAG | [security-intel-rag](https://github.com/cyber-griffith/security-intel-rag) | `data/manifest.json`, `experiments/results/` |
+| Red Team Attack Simulator | [red-team-simulator](https://github.com/cyber-griffith/red-team-simulator) | `results/attack_log.jsonl` |
 
 ## Build
 
